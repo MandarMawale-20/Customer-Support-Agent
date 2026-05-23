@@ -1,5 +1,4 @@
 
-"""CLI entry point for running tickets locally."""
 from __future__ import annotations
 
 import argparse
@@ -13,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 if not os.environ.get("GEMINI_API_KEY"):
-    print("❌ GEMINI_API_KEY not set. Add it to your .env file or export it.")
+    print("GEMINI_API_KEY not set. Add it to your .env file or export it.")
     sys.exit(1)
 
 from src.graph import compile_workflow
@@ -30,7 +29,7 @@ def load_tickets() -> list[dict]:
 def run_ticket(ticket: dict, app) -> None:
     """Run one ticket through the compiled graph and print the reply."""
     print("\n" + "=" * 60)
-    print(f"🎫  Processing {ticket['ticket_id']}: {ticket['subject']}")
+    print(f"Processing {ticket['ticket_id']}: {ticket['subject']}")
     print("=" * 60)
 
     initial_state = {
@@ -55,7 +54,7 @@ def run_ticket(ticket: dict, app) -> None:
     final = result.get("final_response", "")
     trace = result.get("execution_trace")
 
-    print(f"\n✅  Resolution: {trace.workflow_status if trace else 'N/A'}")
+    print(f"\n Resolution: {trace.workflow_status if trace else 'N/A'}")
     print("\n── Customer Reply ──")
     print(final)
 
@@ -72,7 +71,7 @@ def main():
     if args.ticket:
         matched = [t for t in tickets if t["ticket_id"] == args.ticket]
         if not matched:
-            print(f"❌ Ticket {args.ticket} not found in tickets.json")
+            print(f" Ticket {args.ticket} not found in tickets.json")
             sys.exit(1)
         run_ticket(matched[0], app)
     else:
