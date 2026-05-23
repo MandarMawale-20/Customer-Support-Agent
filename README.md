@@ -514,7 +514,7 @@ Each folder is self-contained: same knowledge base, same tickets, different retr
 
 ---
 
-## Questions or Issues?
+## Code Walkthrough
 
 Each system includes detailed docstrings and type hints. Start with:
 
@@ -524,5 +524,3 @@ Each system includes detailed docstrings and type hints. Start with:
 4. CAG/tests/test_harness.py for expected behaviors
 
 ---
-
-Built as a 48-hour take-home assignment. Focus: working software over perfect polish. Lessons learned: Know your KB before choosing retrieval strategy.
