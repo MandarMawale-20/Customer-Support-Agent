@@ -1,35 +1,37 @@
 # Customer Support Resolution Agent
 
-An LLM-powered customer support system that resolves tickets by combining knowledge retrieval, order data lookup, and human oversight.
+Customer Support Agent is an engineering problem that stretches and stress-tests the limits of LLMs.
 
-This is not just a Prompt Engineering Problem—it's an orchestration architecture problem that stretches and stress-tests the limits of what an LLM can reliably do.
+It is not just a prompt engineering problem but an orchestration and architecture problem: the system must combine knowledge retrieval, order-data lookups, and human oversight while remaining auditable and safe.
 
 ---
 
 ## The Engineering Challenge
 
-A typical customer support ticket might need:
+A typical customer support ticket may require:
 
-1. Policy information ("How long do refunds take?") - search the knowledge base
-2. Order data ("Where's my package?") - call the order API
-3. Human judgment ("Can I refund this damaged item?") - escalate with reasoning
+1. Policy information ("How long do refunds take?") — search the knowledge base
+2. Order data ("Where is my package?") — query the order API
+3. Human judgment ("Should we refund this damaged item?") — escalate with justification
 
-The hard part: the agent must never auto-approve financial actions and must gracefully handle failures (missing orders, irrelevant knowledge base articles, timeouts).
+The critical constraints: never auto-approve financial actions, provide traceable citations, and fail gracefully on missing data or timeouts.
 
 ---
 
 ## My Thought Process
 
-After reading the problem statement, my first thought was to check out the knowledge base provided. Looking at the knowledge base gave me an idea about what kind of data I was dealing with. Then I checked the tickets and orders, which led me to understand what needs to be accomplished using the given KB.
+After reading the problem statement, my first step was to inspect the provided knowledge base. That review clarified the type and granularity of policy data available.
 
-Now I started thinking about the architecture of the system. Based on the KB, two approaches came to mind for grounding an LLM with knowledge:
+Next I reviewed the tickets and mock orders to understand the operational scenarios the agent must handle. That led me to consider how best to ground an LLM on the KB while keeping the system auditable and deterministic where required.
+
+Two approaches came to mind for grounding the LLM:
 
 1. Cache Augmented Generation (CAG)
 2. Retrieval Augmented Generation (RAG)
 
-People think "Vector retrieval + LLM = a working system." This approach may work in many cases, but sometimes other approaches work better.
+Many engineers assume "vector retrieval + LLM = working system." That often holds, but for small, policy‑dense KBs other approaches (like CAG) can be more reliable.
 
-The question was simple: Should I load all KB articles at once, or retrieve on-demand?
+The choice comes down to: load full articles up front (CAG) or retrieve and rank smaller chunks on demand (RAG).
 
 ---
 
@@ -61,7 +63,6 @@ Implementation details:
 Code entry point: CAG/src/graph.py → planner_node() → kb_search_node() → resolver_node()
 
 ### RAG (Retrieval Augmented Generation)
-
 KB articles are chunked by section and embedded in a Chroma vector database. The planner issues semantic queries ("How long do refunds take?"). Top-K chunks are retrieved and ranked. The resolver receives only the matched passages.
 
 Implementation details:
@@ -94,15 +95,19 @@ After testing on the 14 provided tickets, CAG demonstrated superior accuracy. He
 ### RAG Struggles
 
 1. Lost context from chunking
-   - When an article is split into sections, the resolver loses the full picture
-   - Example: A chunk on "Photo requirements for damaged items" (kb-004) might be retrieved, but the chunk misses the full 14-day claim window and timeline constraints defined elsewhere in the article
+   - When articles are split into small chunks, critical global constraints (deadlines, cross-section rules) can be omitted from retrieved passages.
+   - Example: a chunk on "photo requirements for damaged items" may omit the 14-day claim window stated elsewhere in the same article.
 
-2. Embedding sensitivity
-   - "What if my item is late?" vs. "When is a package considered lost?" — both map to shipping/tracking but represent different thresholds
-   - Semantic similarity ranked both results equally; the planner had to rely on heuristics to break ties
+2. Context starvation for multi-intent tickets
+   - Tickets that require connecting multiple policies (refund + shipping + warranty) can be broken across different chunks and fail to present a coherent picture to the resolver.
 
-3. Hallucination risk from partial chunks
-   - A chunk on "How to file a warranty claim" could be retrieved even if the ticket is about a non-electronic item (the category restriction helps, but isn't foolproof)
+3. Embedding and keyword sensitivity
+   - Slight phrasing differences (for example, "What if my item is late?" versus "When is a package considered lost?") can produce similar vector matches; keyword matches can also surface unrelated chunks.
+   - Without hybrid ranking and query decomposition, the planner may surface ambiguous or incomplete results.
+
+4. Hallucination and guardrail failures
+   - Partial chunks raise the risk of hallucinated policy claims when the resolver extrapolates beyond available text.
+   - Guardrails reduce this risk but require additional engineering: retry policies, reply validators, and escalation flows.
 
 ### Performance Metrics
 
@@ -234,11 +239,37 @@ With simulated flakiness (random 500s and latency):
 SIMULATE_FLAKE=1 uvicorn order_api:app --port 8080
 ```
 
+### Option 5: Run the unified server + frontend demo
+
+The repo now includes a unified FastAPI server (`server.py`) and a simple frontend demo (`frontend/index.html`). The server compiles both CAG and RAG workflows, exposes SSE streaming for runs, and provides HITL endpoints.
+
+Start the server (recommended):
+
+```bash
+python server.py
+```
+
+Or run with `uvicorn` directly:
+
+```bash
+uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Open the demo in your browser at: `http://localhost:8000/` — the UI lets you pick CAG vs RAG, run tickets, and approve/reject HITL decisions. Useful endpoints (for automation):
+
+- `POST /resolve` — resolve a ticket (SSE stream)
+- `POST /hitl-decision` — submit human approval (`{thread_id, decision: "approved"|"rejected"}`)
+- `GET /runs` and `GET /runs/{ticket_id}` — list and fetch saved traces
+
+
 ---
 
 ## Project Structure
 
 ```
+server.py                   # Unified FastAPI server (SSE streams, HITL endpoints, demo integration)
+frontend/                   # Simple demo UI (frontend/index.html) for interactive runs
+
 CAG/
 ├── main.py                 # CLI entry point
 ├── requirements.txt        # Python dependencies
@@ -258,7 +289,7 @@ CAG/
 │   │   └── escalate.py          # Route to human queue
 │   └── models.py           # Pydantic state & trace models
 └── tests/
-    └── test_harness.py     # 5–10 test cases with auto-approval
+   └── test_harness.py     # 5–10 test cases with auto-approval
 
 RAG/
 ├── main.py                 # CLI entry point
@@ -284,7 +315,7 @@ RAG/
 │   │   └── __init__.py
 │   └── models.py
 └── tests/
-    └── test_harness.py
+   └── test_harness.py
 ```
 
 ---
@@ -474,11 +505,13 @@ Instead of raw agent output, format responses as:
 
 ## Repository Structure
 
-1. CAG/ — Cache Augmented Generation implementation (recommended for small KB)
-2. RAG/ — Retrieval Augmented Generation implementation (recommended for large KB)
-3. README.md — This file
+1. `server.py` — Unified FastAPI server that exposes both CAG and RAG workflows, SSE streaming, and HITL endpoints
+2. `frontend/` — Simple demo UI that interacts with the server for running tickets and approving HITL decisions
+3. `CAG/` — Cache Augmented Generation implementation (recommended for small KB)
+4. `RAG/` — Retrieval Augmented Generation implementation (recommended for large KB)
+5. `README.md` — This file
 
-Each folder is self-contained: same knowledge base, same tickets, different retrieval strategy. Choose one or run both for comparison.
+Top-level components are self-contained: same knowledge base and tickets are used by both retrieval strategies. Use `server.py` + `frontend/` for the interactive demo, or run `CAG/` and `RAG/` independently for development and tests.
 
 ---
 

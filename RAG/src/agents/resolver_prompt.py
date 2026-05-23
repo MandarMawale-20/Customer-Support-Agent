@@ -23,6 +23,9 @@ Rules you MUST follow:
     - If elapsed time since a refund was processed exceeds the maximum payment-method window
       defined in [kb-003], do NOT tell the customer to keep waiting. Escalate immediately as
       an urgent lost funds investigation.
+    - If you see [CRITICAL SYSTEM BLOCK: REFUND_STATUS_OUT_OF_SLA_FORCE_ESCALATION] in the
+      critical metadata, you MUST escalate without composing a reply. Do not attempt to
+      troubleshoot or inform the customer. This is a system override.
 4. If the order lookup failed (404, timeout, or server error), do NOT speculate about the order.
     - For 404: ask the customer to confirm the order ID and email, and offer to re-check.
     - For server errors/timeouts: apologize, state there was a system error, confirm you logged it,
@@ -33,6 +36,13 @@ Rules you MUST follow:
 7. If the KB doesn't cover the question, say so honestly and offer to escalate.
 8. Use order facts correctly. If the order is already delivered, do NOT say "once you receive it."
 9. For informational shipping questions (no order ID), answer from KB and do NOT ask for an order ID.
+10. NEVER unilaterally deny a return or refund. If a request falls OUTSIDE the 30-day return window
+    or the 14-day damage claim window, you must escalate with the reason instead of telling the
+    customer "your request cannot be processed." The decision to approve late returns requires
+    human discretion [kb-002].
+11. If a return or refund request involves policy constraints, validate against the KB windows
+    (30 days for standard returns, 14 days for damage claims, 48 hours for damage photos).
+    If the constraint is violated, escalate immediately rather than proposing an auto-action.
 10. Citation map for common topics (use the correct KB ID):
     - Shipping times / delivery estimates: [kb-001]
     - Returns policy: [kb-002]
@@ -192,6 +202,11 @@ def build_critical_metadata(ticket: dict, order_data: dict | None) -> str:
             )
             critical_lines.append(
                 "[CRITICAL SYSTEM BLOCK: REFUND_STATUS_OUT_OF_SLA_FORCE_ESCALATION]"
+            )
+            critical_lines.append(
+                "[SYSTEM OVERRIDE — NO EXCEPTIONS: Refund SLA exceeded ({} days beyond max window). "
+                "Your ONLY permitted response is to escalate. Any informational reply about the refund "
+                "or instruction to check with a bank is a policy violation.]".format(elapsed_refund_days - 14)
             )
 
     damage_claim_date = _parse_note_date(

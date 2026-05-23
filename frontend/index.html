@@ -1,0 +1,827 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer Support Agent Demo</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --panel: rgba(255, 255, 255, 0.84);
+        --panel-strong: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --line: rgba(31, 41, 55, 0.12);
+        --accent: #2563eb;
+        --accent-soft: #dbeafe;
+        --success: #0f766e;
+        --danger: #b91c1c;
+        --shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+        --radius: 18px;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body { height: 100%; }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 28%),
+          radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 24%),
+          linear-gradient(180deg, #f8f4ec 0%, #eef2ff 100%);
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding: 22px;
+        border-right: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        margin-bottom: 18px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.72));
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent), #7c3aed);
+        box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12);
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.15;
+      }
+
+      .brand p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 14px;
+      }
+
+      .control-card,
+      .tickets-card,
+      .detail-card,
+      .stream-card,
+      .trace-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .control-card {
+        padding: 16px;
+        margin-bottom: 18px;
+      }
+
+      .control-label,
+      .section-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      select, button {
+        font: inherit;
+      }
+
+      select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(31, 41, 55, 0.15);
+        background: var(--panel-strong);
+        color: var(--text);
+        outline: none;
+      }
+
+      select:focus,
+      button:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.18);
+        outline-offset: 2px;
+      }
+
+      .mini-actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .mini-button,
+      .primary-button,
+      .ghost-button,
+      .danger-button {
+        border: 1px solid transparent;
+        border-radius: 14px;
+        padding: 11px 14px;
+        cursor: pointer;
+        transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+      }
+
+      .mini-button:hover,
+      .primary-button:hover,
+      .ghost-button:hover,
+      .danger-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .mini-button,
+      .ghost-button {
+        background: rgba(255, 255, 255, 0.82);
+        border-color: rgba(31, 41, 55, 0.12);
+        color: var(--text);
+      }
+
+      .primary-button {
+        background: linear-gradient(135deg, var(--accent), #1d4ed8);
+        color: white;
+        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
+      }
+
+      .danger-button {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: white;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px 24px 10px;
+      }
+
+      .toolbar-title {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .toolbar-title strong {
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+
+      .toolbar-title span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid var(--line);
+        color: var(--text);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--success);
+        box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.12);
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 18px;
+        padding: 8px 24px 24px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .tickets-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .tickets-header,
+      .detail-header,
+      .stream-header {
+        padding: 16px 16px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tickets-header h2,
+      .detail-header h2,
+      .stream-header h2 {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .tickets-header p,
+      .detail-header p,
+      .stream-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .tickets {
+        overflow: auto;
+        padding: 10px;
+      }
+
+      .ticket {
+        padding: 12px 12px 13px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+      }
+
+      .ticket:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .ticket.active {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(255, 255, 255, 0.96));
+        border-color: rgba(37, 99, 235, 0.18);
+      }
+
+      .ticket-id {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 4px;
+      }
+
+      .ticket-subject {
+        display: block;
+        line-height: 1.4;
+        font-weight: 600;
+      }
+
+      .detail-card {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .detail-body {
+        padding: 16px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .ticket-meta {
+        padding: 14px 14px 16px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(31, 41, 55, 0.09);
+        margin-bottom: 16px;
+        white-space: pre-wrap;
+        line-height: 1.55;
+      }
+
+      .actions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .status-text {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .stream-card {
+        overflow: hidden;
+      }
+
+      .reply-card,
+      .trace-card {
+        overflow: hidden;
+      }
+
+      .reply-box,
+      .trace-box {
+        min-height: 260px;
+        padding: 16px;
+        line-height: 1.55;
+      }
+
+      .reply-box {
+        white-space: pre-wrap;
+        color: #0f172a;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.96));
+      }
+
+      .reply-main {
+        font-size: 15px;
+        white-space: pre-wrap;
+      }
+
+      .citation-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .citation-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: #1d4ed8;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .citation-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+
+      .trace-box {
+        background: rgba(15, 23, 42, 0.97);
+        color: #e5e7eb;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        white-space: pre-wrap;
+      }
+
+      .trace-box .muted {
+        color: #94a3b8;
+      }
+
+      .trace-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .trace-item {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+      }
+
+      .trace-item-title {
+        display: block;
+        margin-bottom: 6px;
+        color: #f8fafc;
+        font-weight: 700;
+      }
+
+      .trace-item-body {
+        color: #cbd5e1;
+        white-space: pre-wrap;
+      }
+
+      .hitl-panel {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 14px 16px 16px;
+        border-top: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .hitl-note {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 1120px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .sidebar,
+        .toolbar,
+        .content {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .status-pill {
+          width: fit-content;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="eyebrow">Support Ops Demo</div>
+          <h1>Customer Support Agent</h1>
+          <p>Switch between CAG and RAG, inspect tickets, and watch the reply stream update in real time.</p>
+        </div>
+
+        <div class="control-card">
+          <label class="control-label" for="modeSelect">Agent mode</label>
+          <select id="modeSelect">
+            <option value="cag">CAG</option>
+            <option value="rag">RAG</option>
+          </select>
+          <div class="mini-actions">
+            <button class="mini-button" id="reloadTickets">Load Tickets</button>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <span class="section-label">What this demo shows</span>
+          <p class="hitl-note" style="margin:0;">
+            A compact ticket queue, grounded answers from the selected backend, and a human approval pause for sensitive actions.
+          </p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="toolbar">
+          <div class="toolbar-title">
+            <strong>Customer Support Resolution Agent</strong>
+            <span>Choose a ticket, resolve it, and review the streamed reasoning trail.</span>
+          </div>
+          <div class="status-pill"><span class="status-dot"></span><span id="status">Idle</span></div>
+        </div>
+
+        <section class="content">
+          <div class="tickets-card">
+            <div class="tickets-header">
+              <h2>Tickets</h2>
+              <p>Select a case from the list to load its details.</p>
+            </div>
+            <div class="tickets" id="tickets"></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-header">
+              <h2>Ticket Details</h2>
+              <p>Review the customer message before triggering resolution.</p>
+            </div>
+            <div class="detail-body">
+              <div id="ticketMeta" class="ticket-meta">No ticket selected</div>
+
+              <div class="actions-row">
+                <button class="primary-button" id="runResolve">Resolve Ticket</button>
+                <button class="ghost-button" id="simulateAll">Simulate All</button>
+                <span class="status-text" id="statusText">Ready</span>
+              </div>
+
+              <div class="reply-card stream-card">
+                <div class="stream-header">
+                  <h2>Agent Reply</h2>
+                  <p>This is the actual customer-facing reply. The citations appear at the end.</p>
+                </div>
+                <div class="reply-box" id="replyBox">
+                  <div class="reply-main" id="replyText">Waiting for a ticket resolution...</div>
+                  <div class="citation-strip" id="citationStrip" style="display:none"></div>
+                </div>
+                <div id="hitlActions" class="hitl-panel" style="display:none">
+                  <button class="primary-button" id="approve">Approve</button>
+                  <button class="danger-button" id="reject">Reject</button>
+                </div>
+              </div>
+
+              <div class="trace-card">
+                <div class="stream-header">
+                  <h2>Traceability</h2>
+                  <p>Reasoning steps, tool usage, and saved run details from the backend trace.</p>
+                </div>
+                <div class="trace-box" id="traceBox">
+                  <div class="muted">Run trace will appear here after you resolve a ticket.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const ticketsEl = document.getElementById('tickets');
+      const ticketMeta = document.getElementById('ticketMeta');
+      const modeSelect = document.getElementById('modeSelect');
+      const statusEl = document.getElementById('status');
+      const statusTextEl = document.getElementById('statusText');
+      const hitlEl = document.getElementById('hitlActions');
+      const replyTextEl = document.getElementById('replyText');
+      const citationStripEl = document.getElementById('citationStrip');
+      const traceBoxEl = document.getElementById('traceBox');
+
+      let tickets = [];
+      let selectedTicket = null;
+      let activeThreadId = null;
+
+      async function loadTickets() {
+        const response = await fetch('/tickets');
+        const data = await response.json();
+        tickets = data.tickets || [];
+        renderTickets();
+      }
+
+      function renderTickets() {
+        ticketsEl.innerHTML = '';
+        tickets.forEach(ticket => {
+          const item = document.createElement('div');
+          item.className = `ticket${selectedTicket?.ticket_id === ticket.ticket_id ? ' active' : ''}`;
+          item.innerHTML = `<span class="ticket-id">${ticket.ticket_id}</span><span class="ticket-subject">${ticket.subject}</span>`;
+          item.onclick = () => {
+            selectedTicket = ticket;
+            renderTickets();
+            renderSelectedTicket();
+          };
+          ticketsEl.appendChild(item);
+        });
+      }
+
+      function renderSelectedTicket() {
+        if (!selectedTicket) {
+          ticketMeta.textContent = 'No ticket selected';
+          return;
+        }
+
+        ticketMeta.innerHTML = `<strong>${selectedTicket.ticket_id}</strong> — ${selectedTicket.customer_email}\n\n${selectedTicket.body}`;
+      }
+
+      function setStatus(message, detail) {
+        statusEl.textContent = message;
+        statusTextEl.textContent = detail || '';
+      }
+
+      function clearRunView() {
+        replyTextEl.textContent = 'Working on the reply...';
+        citationStripEl.innerHTML = '';
+        citationStripEl.style.display = 'none';
+        traceBoxEl.innerHTML = '<div class="muted">Waiting for the saved run...</div>';
+        hitlEl.style.display = 'none';
+        activeThreadId = null;
+      }
+
+      function appendTraceCard(title, body) {
+        if (traceBoxEl.querySelector('.muted')) {
+          traceBoxEl.innerHTML = '';
+        }
+
+        const card = document.createElement('div');
+        card.className = 'trace-item';
+        card.innerHTML = `<span class="trace-item-title">${title}</span><div class="trace-item-body">${body}</div>`;
+        traceBoxEl.appendChild(card);
+      }
+
+      function renderCitations(citations) {
+        citationStripEl.innerHTML = '';
+        if (!citations.length) {
+          citationStripEl.style.display = 'none';
+          return;
+        }
+
+        citations.forEach(citation => {
+          const pill = document.createElement('span');
+          pill.className = 'citation-pill';
+          pill.textContent = citation;
+          citationStripEl.appendChild(pill);
+        });
+        citationStripEl.style.display = 'flex';
+      }
+
+      function extractCitations(data) {
+        const executionTrace = data.execution_trace || {};
+        const cited = Array.isArray(executionTrace.citations_used) ? executionTrace.citations_used : [];
+        const reply = data.final_response || '';
+        const fromReply = reply.match(/kb-\d{3}/g) || [];
+        return Array.from(new Set([...cited, ...fromReply]));
+      }
+
+      function formatList(items, emptyText) {
+        if (!items.length) return emptyText;
+        return `<ul class="trace-list">${items.map(item => `<li class="trace-item"><div class="trace-item-body">${item}</div></li>`).join('')}</ul>`;
+      }
+
+      function renderSavedRun(data) {
+        const executionTrace = data.execution_trace || {};
+        const reply = data.final_response || '';
+        const decisionTrace = Array.isArray(executionTrace.decision_trace) ? executionTrace.decision_trace : [];
+        const toolCalls = Array.isArray(executionTrace.tool_calls) ? executionTrace.tool_calls : [];
+
+        replyTextEl.textContent = reply || 'No reply available.';
+        renderCitations(extractCitations(data));
+
+        traceBoxEl.innerHTML = '';
+        appendTraceCard('Run Summary', [
+          data.ticket_id ? `Ticket: ${data.ticket_id}` : null,
+          data.saved_at ? `Saved at: ${data.saved_at}` : null,
+          executionTrace.workflow_status ? `Status: ${executionTrace.workflow_status}` : null,
+          executionTrace.resolution_type ? `Resolution: ${executionTrace.resolution_type}` : null,
+          executionTrace.citations_used?.length ? `Citations: ${executionTrace.citations_used.join(', ')}` : null,
+        ].filter(Boolean).join('<br />'));
+
+        appendTraceCard('Reasoning', formatList(decisionTrace.map(step => `- ${step}`), 'No reasoning steps captured.'));
+        appendTraceCard('Tool Logs', formatList(toolCalls.map(call => {
+          const toolName = call.tool_name || 'tool';
+          const status = call.status || 'UNKNOWN';
+          const summary = call.output_summary || '';
+          return `- ${toolName} [${status}]${summary ? `<br />${summary}` : ''}`;
+        }), 'No tool calls captured.'));
+      }
+
+      async function loadSavedRun(ticketId, mode) {
+        const response = await fetch(`/runs/${ticketId}?mode=${mode}`);
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        renderSavedRun(await response.json());
+        setStatus('Loaded from trace', 'Reply and trace populated from /runs');
+      }
+
+      async function runResolve(ticket) {
+        const mode = modeSelect.value;
+        clearRunView();
+        setStatus('Processing...', 'Running workflow');
+
+        const response = await fetch(`/resolve?mode=${mode}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(ticket),
+        });
+
+        if (!response.ok || !response.body) {
+          throw new Error(await response.text());
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const events = buffer.split('\n\n');
+          buffer = events.pop() || '';
+
+          for (const event of events) {
+            const line = event.replace(/^data:\s*/, '');
+            if (!line) continue;
+
+            let payload;
+            try {
+              payload = JSON.parse(line);
+            } catch {
+              continue;
+            }
+
+            if (payload.type === 'hitl_required') {
+              activeThreadId = payload.thread_id;
+              hitlEl.style.display = 'flex';
+              setStatus('Waiting for approval', 'Human review required');
+              appendTraceCard('Human Review', `Thread ${payload.thread_id} is waiting for approval.`);
+              continue;
+            }
+
+            if (payload.type === 'hitl_decision_received') {
+              setStatus('Approval received', payload.decision);
+              continue;
+            }
+
+            if (payload.type === 'hitl_timeout') {
+              setStatus('Timed out', payload.message);
+              appendTraceCard('Human Review', payload.message);
+              continue;
+            }
+
+            if (payload.type === 'error') {
+              setStatus('Error', payload.error);
+              appendTraceCard('Error', payload.error);
+              continue;
+            }
+
+            if (payload._final) {
+              await loadSavedRun(ticket.ticket_id, mode);
+            }
+          }
+        }
+      }
+
+      document.getElementById('reloadTickets').onclick = loadTickets;
+      document.getElementById('runResolve').onclick = () => {
+        if (!selectedTicket) {
+          alert('Select a ticket');
+          return;
+        }
+
+        runResolve(selectedTicket).catch(error => {
+          setStatus('Error', String(error));
+        });
+      };
+
+      document.getElementById('simulateAll').onclick = async () => {
+        for (const ticket of tickets) {
+          try {
+            await runResolve(ticket);
+          } catch (error) {
+            setStatus('Error', String(error));
+          }
+        }
+      };
+
+      document.getElementById('approve').onclick = () => {
+        if (!activeThreadId) return;
+        fetch('/hitl-decision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ thread_id: activeThreadId, decision: 'approved' }),
+        });
+      };
+
+      document.getElementById('reject').onclick = () => {
+        if (!activeThreadId) return;
+        fetch('/hitl-decision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ thread_id: activeThreadId, decision: 'rejected' }),
+        });
+      };
+
+      loadTickets();
+    </script>
+  </body>
+</html>

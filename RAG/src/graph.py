@@ -154,6 +154,46 @@ def resolver_node(state: AgentState) -> dict:
             "execution_trace": updated_trace,
         }
 
+    planner: PlannerResponse = state["planner_output"]
+    order_trace = state.get("order_tool_trace")
+    
+    # Guard: if order lookup was required but failed or ID was invalid, escalate
+    if planner.requires_order_lookup and not state.get("order_data"):
+        if order_trace and order_trace.status in ("404_NOT_FOUND", "ERROR", "TIMEOUT"):
+            reason = f"Order lookup failed: {order_trace.status}. Requires human review before composing response."
+            confirmation, esc_trace = escalate(state["ticket"], reason)
+            tool_calls = list(trace.tool_calls) + [esc_trace]
+            decision_trace = list(trace.decision_trace) + [f"Escalation triggered: invalid order lookup"]
+            updated_trace = trace.model_copy(update={
+                "tool_calls": tool_calls,
+                "decision_trace": decision_trace,
+                "workflow_status": "ESCALATED",
+                "resolution_type": "ESCALATED",
+                "hitl": HITLTrace(triggered=False, action_type="NONE"),
+            })
+            return {
+                "final_response": confirmation,
+                "requires_hitl": False,
+                "execution_trace": updated_trace,
+            }
+        elif not planner.extracted_order_id:
+            reason = "Order ID could not be extracted or is invalid. Requires human review."
+            confirmation, esc_trace = escalate(state["ticket"], reason)
+            tool_calls = list(trace.tool_calls) + [esc_trace]
+            decision_trace = list(trace.decision_trace) + [f"Escalation triggered: missing/invalid order ID"]
+            updated_trace = trace.model_copy(update={
+                "tool_calls": tool_calls,
+                "decision_trace": decision_trace,
+                "workflow_status": "ESCALATED",
+                "resolution_type": "ESCALATED",
+                "hitl": HITLTrace(triggered=False, action_type="NONE"),
+            })
+            return {
+                "final_response": confirmation,
+                "requires_hitl": False,
+                "execution_trace": updated_trace,
+            }
+
     llm = _get_llm()
     structured_llm = llm.with_structured_output(ResolverResponse)
     prompt = build_resolver_prompt(
@@ -204,9 +244,16 @@ def _validate_reply(
     order_data: dict | None,
     order_trace: ToolCallTrace | None,
     classification: str,
+    requires_hitl: bool = False,
 ) -> tuple[bool, str]:
     if "HITL_" in reply or "<" in reply or ">" in reply:
         return False, "Remove any placeholder tokens or HITL markers from the reply."
+
+    if requires_hitl:
+        if "[PENDING HUMAN APPROVAL" not in reply:
+            return False, "Financial action replies must end with [PENDING HUMAN APPROVAL — reply will be sent after review]."
+        if re.search(r"\b(processed|issued|refunded|will be applied)\b", reply, re.IGNORECASE):
+            return False, "Do not confirm that a financial action has been processed or issued. Use pending approval format instead."
 
     if requires_kb_search and not re.search(r"kb-\d{3}", reply):
         return False, "Include at least one kb-### citation for policy claims."
@@ -260,6 +307,20 @@ def _validate_reply(
         if re.search(r"order (id|number)", reply, re.IGNORECASE):
             return False, "Informational tickets should not request an order ID."
 
+    # Prevent bot from unilaterally denying returns/refunds; these must be escalated
+    denial_patterns = (
+        r"cannot (process|handle|approve)",
+        r"(cannot|no longer|no)\s+(accept|process)\s+.{0,20}(return|refund)",
+        r"(unfortunately|sorry).{0,30}(cannot|unable).{0,20}(return|refund)",
+    )
+    escalation_keywords = (
+        "escalat", "human support", "review", "manager", "team"
+    )
+    for pattern in denial_patterns:
+        if re.search(pattern, reply, re.IGNORECASE):
+            if not any(kw in reply.lower() for kw in escalation_keywords):
+                return False, "Return/refund denials must be escalated to human review, not communicated as bot decisions."
+
     return True, ""
 
 
@@ -273,6 +334,7 @@ def guardrail_node(state: AgentState) -> dict:
         state.get("order_data"),
         state.get("order_tool_trace"),
         planner.classification,
+        requires_hitl=state.get("requires_hitl", False),
     )
 
     if ok:
