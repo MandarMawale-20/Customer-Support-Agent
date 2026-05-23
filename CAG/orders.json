@@ -1,0 +1,614 @@
+{
+  "orders": [
+    {
+      "order_id": "ORD-10001",
+      "customer_email": "anna.jansen@example.com",
+      "placed_at": "2025-09-28T10:14:00Z",
+      "shipped_at": "2025-09-29T08:30:00Z",
+      "delivered_at": "2025-10-02T14:11:00Z",
+      "status": "delivered",
+      "carrier": "PostNL",
+      "tracking_number": "3SABCD1234567890",
+      "items": [
+        {"sku": "TS-OXFD-M-NVY", "name": "Oxford Shirt — Navy, M", "qty": 2, "unit_price": 49.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Utrecht"},
+      "total": 98.00,
+      "currency": "EUR",
+      "payment_method": "ideal"
+    },
+    {
+      "order_id": "ORD-10002",
+      "customer_email": "mark.devries@example.com",
+      "placed_at": "2025-10-01T18:42:00Z",
+      "shipped_at": "2025-10-02T09:15:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "DHL",
+      "tracking_number": "JD0123456789NL",
+      "items": [
+        {"sku": "HD-LAMP-WAL", "name": "Walnut Desk Lamp", "qty": 1, "unit_price": 89.00}
+      ],
+      "shipping_address": {"country": "BE", "city": "Antwerp"},
+      "total": 89.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10003",
+      "customer_email": "lena.schmidt@example.com",
+      "placed_at": "2025-09-15T11:05:00Z",
+      "shipped_at": "2025-09-16T07:40:00Z",
+      "delivered_at": "2025-09-19T16:22:00Z",
+      "status": "delivered",
+      "carrier": "DHL",
+      "tracking_number": "JD0987654321DE",
+      "items": [
+        {"sku": "BAG-LTHR-BRN", "name": "Leather Crossbody Bag — Brown", "qty": 1, "unit_price": 149.00}
+      ],
+      "shipping_address": {"country": "DE", "city": "Munich"},
+      "total": 149.00,
+      "currency": "EUR",
+      "payment_method": "paypal"
+    },
+    {
+      "order_id": "ORD-10004",
+      "customer_email": "emma.wright@example.co.uk",
+      "placed_at": "2025-09-22T14:00:00Z",
+      "shipped_at": "2025-09-23T10:00:00Z",
+      "delivered_at": null,
+      "status": "lost",
+      "carrier": "Royal Mail",
+      "tracking_number": "RM1234567890GB",
+      "items": [
+        {"sku": "KN-CARD-GRY-L", "name": "Cardigan — Grey, L", "qty": 1, "unit_price": 119.00}
+      ],
+      "shipping_address": {"country": "UK", "city": "Manchester"},
+      "total": 119.00,
+      "currency": "EUR",
+      "payment_method": "card_mastercard",
+      "notes": "Carrier investigation opened 2025-10-05. No movement since 2025-09-25."
+    },
+    {
+      "order_id": "ORD-10005",
+      "customer_email": "tom.bakker@example.com",
+      "placed_at": "2025-10-03T09:22:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "cancelled",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "EL-HDPN-BLK", "name": "Wireless Headphones — Black", "qty": 1, "unit_price": 179.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Amsterdam"},
+      "total": 179.00,
+      "currency": "EUR",
+      "payment_method": "card_visa",
+      "notes": "Customer cancelled before shipping; refund processed 2025-10-04."
+    },
+    {
+      "order_id": "ORD-10006",
+      "customer_email": "sofie.larsen@example.dk",
+      "placed_at": "2025-09-10T16:30:00Z",
+      "shipped_at": "2025-09-11T08:00:00Z",
+      "delivered_at": "2025-09-15T11:45:00Z",
+      "status": "delivered",
+      "carrier": "GLS",
+      "tracking_number": "GLS9988776655DK",
+      "items": [
+        {"sku": "TS-LINEN-S-WHT", "name": "Linen Shirt — White, S", "qty": 1, "unit_price": 79.00},
+        {"sku": "TR-CHINO-30-OLV", "name": "Chinos — Olive, 30", "qty": 1, "unit_price": 89.00}
+      ],
+      "shipping_address": {"country": "DK", "city": "Copenhagen"},
+      "total": 168.00,
+      "currency": "EUR",
+      "payment_method": "klarna"
+    },
+    {
+      "order_id": "ORD-10007",
+      "customer_email": "pieter.vandenberg@example.com",
+      "placed_at": "2025-10-05T20:11:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "processing",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "EL-SPKR-WAL", "name": "Bluetooth Speaker — Walnut", "qty": 1, "unit_price": 119.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Rotterdam"},
+      "total": 119.00,
+      "currency": "EUR",
+      "payment_method": "ideal"
+    },
+    {
+      "order_id": "ORD-10008",
+      "customer_email": "marie.dubois@example.fr",
+      "placed_at": "2025-09-26T08:50:00Z",
+      "shipped_at": "2025-09-27T07:00:00Z",
+      "delivered_at": "2025-10-01T13:00:00Z",
+      "status": "delivered",
+      "carrier": "Chronopost",
+      "tracking_number": "CH1122334455FR",
+      "items": [
+        {"sku": "BAG-LTHR-BLK", "name": "Leather Tote — Black", "qty": 1, "unit_price": 189.00}
+      ],
+      "shipping_address": {"country": "FR", "city": "Lyon"},
+      "total": 189.00,
+      "currency": "EUR",
+      "payment_method": "card_visa",
+      "notes": "Customer reported the bag arrived with a torn strap (damage claim filed 2025-10-02)."
+    },
+    {
+      "order_id": "ORD-10009",
+      "customer_email": "diego.alvarez@example.es",
+      "placed_at": "2025-10-04T13:25:00Z",
+      "shipped_at": "2025-10-05T09:30:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "SEUR",
+      "tracking_number": "SE9988776655ES",
+      "items": [
+        {"sku": "TS-OXFD-L-BLU", "name": "Oxford Shirt — Blue, L", "qty": 1, "unit_price": 49.00}
+      ],
+      "shipping_address": {"country": "ES", "city": "Madrid"},
+      "total": 49.00,
+      "currency": "EUR",
+      "payment_method": "card_mastercard"
+    },
+    {
+      "order_id": "ORD-10010",
+      "customer_email": "jasper.koning@example.com",
+      "placed_at": "2025-08-20T15:40:00Z",
+      "shipped_at": "2025-08-21T09:00:00Z",
+      "delivered_at": "2025-08-24T17:15:00Z",
+      "status": "delivered",
+      "carrier": "PostNL",
+      "tracking_number": "3SXYZA0987654321",
+      "items": [
+        {"sku": "EL-HDPN-WHT", "name": "Wireless Headphones — White", "qty": 1, "unit_price": 179.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Amsterdam"},
+      "total": 179.00,
+      "currency": "EUR",
+      "payment_method": "card_visa",
+      "notes": "Within 2-year warranty period."
+    },
+    {
+      "order_id": "ORD-10011",
+      "customer_email": "isabel.costa@example.pt",
+      "placed_at": "2025-09-30T11:18:00Z",
+      "shipped_at": "2025-10-01T08:45:00Z",
+      "delivered_at": "2025-10-06T14:00:00Z",
+      "status": "delivered",
+      "carrier": "CTT Expresso",
+      "tracking_number": "CT1234567890PT",
+      "items": [
+        {"sku": "HD-VASE-CER-WHT", "name": "Ceramic Vase — White", "qty": 2, "unit_price": 39.00}
+      ],
+      "shipping_address": {"country": "PT", "city": "Lisbon"},
+      "total": 78.00,
+      "currency": "EUR",
+      "payment_method": "paypal"
+    },
+    {
+      "order_id": "ORD-10012",
+      "customer_email": "felix.schaefer@example.de",
+      "placed_at": "2025-10-06T19:55:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "processing",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "KN-CARD-NVY-M", "name": "Cardigan — Navy, M", "qty": 1, "unit_price": 119.00},
+        {"sku": "TR-CHINO-32-BLK", "name": "Chinos — Black, 32", "qty": 1, "unit_price": 89.00}
+      ],
+      "shipping_address": {"country": "DE", "city": "Berlin"},
+      "total": 208.00,
+      "currency": "EUR",
+      "payment_method": "klarna"
+    },
+    {
+      "order_id": "ORD-10013",
+      "customer_email": "nora.olsen@example.no",
+      "placed_at": "2025-09-18T10:30:00Z",
+      "shipped_at": "2025-09-19T08:00:00Z",
+      "delivered_at": "2025-09-25T11:30:00Z",
+      "status": "delivered",
+      "carrier": "Bring",
+      "tracking_number": "BR0011223344NO",
+      "items": [
+        {"sku": "BAG-CANVAS-NTRL", "name": "Canvas Weekender — Natural", "qty": 1, "unit_price": 99.00}
+      ],
+      "shipping_address": {"country": "NO", "city": "Oslo"},
+      "total": 99.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10014",
+      "customer_email": "luca.rossi@example.it",
+      "placed_at": "2025-10-02T17:00:00Z",
+      "shipped_at": "2025-10-03T09:00:00Z",
+      "delivered_at": "2025-10-08T16:45:00Z",
+      "status": "delivered",
+      "carrier": "BRT",
+      "tracking_number": "BR9988776655IT",
+      "items": [
+        {"sku": "EL-CHRGR-USB-C", "name": "USB-C Fast Charger", "qty": 2, "unit_price": 29.00}
+      ],
+      "shipping_address": {"country": "IT", "city": "Milan"},
+      "total": 58.00,
+      "currency": "EUR",
+      "payment_method": "ideal"
+    },
+    {
+      "order_id": "ORD-10015",
+      "customer_email": "hannah.muller@example.de",
+      "placed_at": "2025-09-08T12:14:00Z",
+      "shipped_at": "2025-09-09T08:20:00Z",
+      "delivered_at": "2025-09-12T15:00:00Z",
+      "status": "returned",
+      "carrier": "DHL",
+      "tracking_number": "JD5544332211DE",
+      "items": [
+        {"sku": "TS-LINEN-M-BLU", "name": "Linen Shirt — Blue, M", "qty": 1, "unit_price": 79.00}
+      ],
+      "shipping_address": {"country": "DE", "city": "Hamburg"},
+      "total": 79.00,
+      "currency": "EUR",
+      "payment_method": "card_visa",
+      "notes": "Return received 2025-09-25. Refund of €79.00 issued to original card 2025-09-26."
+    },
+    {
+      "order_id": "ORD-10016",
+      "customer_email": "kasper.nielsen@example.dk",
+      "placed_at": "2025-10-07T08:00:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "payment_failed",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "EL-HDPN-BLK", "name": "Wireless Headphones — Black", "qty": 1, "unit_price": 179.00}
+      ],
+      "shipping_address": {"country": "DK", "city": "Aarhus"},
+      "total": 179.00,
+      "currency": "EUR",
+      "payment_method": "card_visa",
+      "notes": "Card declined at checkout. Order auto-cancelled after 24h hold expired 2025-10-08."
+    },
+    {
+      "order_id": "ORD-10017",
+      "customer_email": "olivia.brown@example.co.uk",
+      "placed_at": "2025-09-25T11:00:00Z",
+      "shipped_at": "2025-09-26T09:00:00Z",
+      "delivered_at": "2025-10-01T14:30:00Z",
+      "status": "delivered",
+      "carrier": "Royal Mail",
+      "tracking_number": "RM9988776655GB",
+      "items": [
+        {"sku": "HD-CNDLE-FIG", "name": "Fig Scented Candle", "qty": 3, "unit_price": 28.00}
+      ],
+      "shipping_address": {"country": "UK", "city": "London"},
+      "total": 84.00,
+      "currency": "EUR",
+      "payment_method": "card_amex",
+      "notes": "Customs duties paid by customer on delivery."
+    },
+    {
+      "order_id": "ORD-10018",
+      "customer_email": "noa.peeters@example.com",
+      "placed_at": "2025-08-30T09:45:00Z",
+      "shipped_at": "2025-08-31T08:10:00Z",
+      "delivered_at": "2025-09-02T13:00:00Z",
+      "status": "delivered",
+      "carrier": "PostNL",
+      "tracking_number": "3SPQRS1234567",
+      "items": [
+        {"sku": "EL-SPKR-BLK", "name": "Bluetooth Speaker — Black", "qty": 1, "unit_price": 119.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "The Hague"},
+      "total": 119.00,
+      "currency": "EUR",
+      "payment_method": "ideal",
+      "notes": "Within 2-year warranty period."
+    },
+    {
+      "order_id": "ORD-10019",
+      "customer_email": "amélie.laurent@example.fr",
+      "placed_at": "2025-10-08T13:30:00Z",
+      "shipped_at": "2025-10-09T08:00:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "Chronopost",
+      "tracking_number": "CH7766554433FR",
+      "items": [
+        {"sku": "BAG-LTHR-COG", "name": "Leather Crossbody Bag — Cognac", "qty": 1, "unit_price": 149.00}
+      ],
+      "shipping_address": {"country": "FR", "city": "Paris"},
+      "total": 149.00,
+      "currency": "EUR",
+      "payment_method": "paypal"
+    },
+    {
+      "order_id": "ORD-10020",
+      "customer_email": "ben.taylor@example.com.au",
+      "placed_at": "2025-09-20T22:15:00Z",
+      "shipped_at": "2025-09-22T09:00:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "DHL Express",
+      "tracking_number": "JD1010101010AU",
+      "items": [
+        {"sku": "TS-OXFD-L-WHT", "name": "Oxford Shirt — White, L", "qty": 2, "unit_price": 49.00}
+      ],
+      "shipping_address": {"country": "AU", "city": "Sydney"},
+      "total": 98.00,
+      "currency": "EUR",
+      "payment_method": "card_mastercard",
+      "notes": "International shipment — DDU. Customer responsible for duties."
+    },
+    {
+      "order_id": "ORD-10021",
+      "customer_email": "stefan.huber@example.at",
+      "placed_at": "2025-09-12T08:00:00Z",
+      "shipped_at": "2025-09-13T09:00:00Z",
+      "delivered_at": "2025-09-17T15:00:00Z",
+      "status": "delivered",
+      "carrier": "Österreichische Post",
+      "tracking_number": "OE1122334455AT",
+      "items": [
+        {"sku": "KN-SCARF-CHRC", "name": "Wool Scarf — Charcoal", "qty": 1, "unit_price": 59.00}
+      ],
+      "shipping_address": {"country": "AT", "city": "Vienna"},
+      "total": 59.00,
+      "currency": "EUR",
+      "payment_method": "klarna"
+    },
+    {
+      "order_id": "ORD-10022",
+      "customer_email": "maja.kowalska@example.pl",
+      "placed_at": "2025-10-09T11:00:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "processing",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "HD-LAMP-OAK", "name": "Oak Floor Lamp", "qty": 1, "unit_price": 189.00}
+      ],
+      "shipping_address": {"country": "PL", "city": "Warsaw"},
+      "total": 189.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10023",
+      "customer_email": "rasmus.lindqvist@example.se",
+      "placed_at": "2025-09-05T14:20:00Z",
+      "shipped_at": "2025-09-06T09:00:00Z",
+      "delivered_at": "2025-09-10T12:30:00Z",
+      "status": "delivered",
+      "carrier": "PostNord",
+      "tracking_number": "PN6677889900SE",
+      "items": [
+        {"sku": "EL-CHRGR-USB-C", "name": "USB-C Fast Charger", "qty": 1, "unit_price": 29.00}
+      ],
+      "shipping_address": {"country": "SE", "city": "Stockholm"},
+      "total": 29.00,
+      "currency": "EUR",
+      "payment_method": "ideal"
+    },
+    {
+      "order_id": "ORD-10024",
+      "customer_email": "elena.popescu@example.ro",
+      "placed_at": "2025-10-10T16:00:00Z",
+      "shipped_at": "2025-10-11T08:30:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "DHL",
+      "tracking_number": "JD4433221100RO",
+      "items": [
+        {"sku": "TR-CHINO-28-NVY", "name": "Chinos — Navy, 28", "qty": 1, "unit_price": 89.00}
+      ],
+      "shipping_address": {"country": "RO", "city": "Bucharest"},
+      "total": 89.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10025",
+      "customer_email": "tom.bakker@example.com",
+      "placed_at": "2025-10-05T11:00:00Z",
+      "shipped_at": "2025-10-06T08:00:00Z",
+      "delivered_at": "2025-10-09T14:00:00Z",
+      "status": "delivered",
+      "carrier": "PostNL",
+      "tracking_number": "3SQRST7654321",
+      "items": [
+        {"sku": "EL-HDPN-BLK", "name": "Wireless Headphones — Black", "qty": 1, "unit_price": 179.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Amsterdam"},
+      "total": 179.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10026",
+      "customer_email": "claire.moreau@example.fr",
+      "placed_at": "2025-09-29T19:00:00Z",
+      "shipped_at": "2025-09-30T08:00:00Z",
+      "delivered_at": "2025-10-03T16:00:00Z",
+      "status": "delivered",
+      "carrier": "Chronopost",
+      "tracking_number": "CH3344556677FR",
+      "items": [
+        {"sku": "BAG-LTHR-BLK", "name": "Leather Tote — Black", "qty": 1, "unit_price": 189.00}
+      ],
+      "shipping_address": {"country": "FR", "city": "Bordeaux"},
+      "total": 189.00,
+      "currency": "EUR",
+      "payment_method": "card_amex"
+    },
+    {
+      "order_id": "ORD-10027",
+      "customer_email": "viktor.novak@example.cz",
+      "placed_at": "2025-10-11T10:00:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "processing",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "TS-OXFD-M-BLU", "name": "Oxford Shirt — Blue, M", "qty": 3, "unit_price": 49.00}
+      ],
+      "shipping_address": {"country": "CZ", "city": "Prague"},
+      "total": 147.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10028",
+      "customer_email": "saskia.devries@example.com",
+      "placed_at": "2025-09-14T15:00:00Z",
+      "shipped_at": "2025-09-15T09:00:00Z",
+      "delivered_at": "2025-09-17T13:00:00Z",
+      "status": "delivered",
+      "carrier": "PostNL",
+      "tracking_number": "3SDEFG2345678",
+      "items": [
+        {"sku": "HD-VASE-CER-TRC", "name": "Ceramic Vase — Terracotta", "qty": 1, "unit_price": 39.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Groningen"},
+      "total": 39.00,
+      "currency": "EUR",
+      "payment_method": "ideal",
+      "notes": "Damage claim opened 2025-09-18 (vase arrived cracked). Replacement shipped under ORD-10028-R."
+    },
+    {
+      "order_id": "ORD-10029",
+      "customer_email": "joost.peters@example.com",
+      "placed_at": "2025-10-12T09:30:00Z",
+      "shipped_at": "2025-10-13T08:00:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "PostNL",
+      "tracking_number": "3SHIJK3456789",
+      "items": [
+        {"sku": "EL-SPKR-WAL", "name": "Bluetooth Speaker — Walnut", "qty": 1, "unit_price": 119.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Eindhoven"},
+      "total": 119.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10030",
+      "customer_email": "irene.santos@example.es",
+      "placed_at": "2025-08-15T12:00:00Z",
+      "shipped_at": "2025-08-16T09:00:00Z",
+      "delivered_at": "2025-08-20T15:00:00Z",
+      "status": "delivered",
+      "carrier": "SEUR",
+      "tracking_number": "SE5566778899ES",
+      "items": [
+        {"sku": "TS-LINEN-S-BLU", "name": "Linen Shirt — Blue, S", "qty": 1, "unit_price": 79.00}
+      ],
+      "shipping_address": {"country": "ES", "city": "Barcelona"},
+      "total": 79.00,
+      "currency": "EUR",
+      "payment_method": "klarna",
+      "notes": "Outside 30-day standard return window (delivered 2025-08-20)."
+    },
+    {
+      "order_id": "ORD-10031",
+      "customer_email": "marcus.brandt@example.de",
+      "placed_at": "2025-10-04T20:00:00Z",
+      "shipped_at": "2025-10-05T08:00:00Z",
+      "delivered_at": "2025-10-08T11:00:00Z",
+      "status": "delivered",
+      "carrier": "DHL",
+      "tracking_number": "JD6677889900DE",
+      "items": [
+        {"sku": "EL-SPKR-BLK", "name": "Bluetooth Speaker — Black", "qty": 1, "unit_price": 119.00},
+        {"sku": "EL-CHRGR-USB-C", "name": "USB-C Fast Charger", "qty": 1, "unit_price": 29.00}
+      ],
+      "shipping_address": {"country": "DE", "city": "Frankfurt"},
+      "total": 148.00,
+      "currency": "EUR",
+      "payment_method": "card_visa"
+    },
+    {
+      "order_id": "ORD-10032",
+      "customer_email": "fenna.dejong@example.com",
+      "placed_at": "2025-10-14T14:00:00Z",
+      "shipped_at": null,
+      "delivered_at": null,
+      "status": "processing",
+      "carrier": null,
+      "tracking_number": null,
+      "items": [
+        {"sku": "KN-CARD-CRM-S", "name": "Cardigan — Cream, S", "qty": 1, "unit_price": 119.00}
+      ],
+      "shipping_address": {"country": "NL", "city": "Haarlem"},
+      "total": 119.00,
+      "currency": "EUR",
+      "payment_method": "ideal"
+    },
+    {
+      "order_id": "ORD-10033",
+      "customer_email": "henrik.lindberg@example.se",
+      "placed_at": "2025-09-22T08:00:00Z",
+      "shipped_at": "2025-09-23T08:00:00Z",
+      "delivered_at": "2025-09-29T12:00:00Z",
+      "status": "delivered",
+      "carrier": "PostNord",
+      "tracking_number": "PN1234567890SE",
+      "items": [
+        {"sku": "BAG-CANVAS-NVY", "name": "Canvas Weekender — Navy", "qty": 1, "unit_price": 99.00}
+      ],
+      "shipping_address": {"country": "SE", "city": "Gothenburg"},
+      "total": 99.00,
+      "currency": "EUR",
+      "payment_method": "card_mastercard"
+    },
+    {
+      "order_id": "ORD-10034",
+      "customer_email": "yui.tanaka@example.jp",
+      "placed_at": "2025-09-18T03:00:00Z",
+      "shipped_at": "2025-09-19T09:00:00Z",
+      "delivered_at": "2025-09-28T11:00:00Z",
+      "status": "delivered",
+      "carrier": "DHL Express",
+      "tracking_number": "JD2233445566JP",
+      "items": [
+        {"sku": "KN-SCARF-CHRC", "name": "Wool Scarf — Charcoal", "qty": 2, "unit_price": 59.00}
+      ],
+      "shipping_address": {"country": "JP", "city": "Tokyo"},
+      "total": 118.00,
+      "currency": "EUR",
+      "payment_method": "card_visa",
+      "notes": "International shipment — DDU. Duties paid by customer on delivery."
+    },
+    {
+      "order_id": "ORD-10035",
+      "customer_email": "rosa.fernandez@example.es",
+      "placed_at": "2025-10-13T19:30:00Z",
+      "shipped_at": "2025-10-14T09:00:00Z",
+      "delivered_at": null,
+      "status": "in_transit",
+      "carrier": "SEUR",
+      "tracking_number": "SE0011223344ES",
+      "items": [
+        {"sku": "HD-CNDLE-FIG", "name": "Fig Scented Candle", "qty": 2, "unit_price": 28.00}
+      ],
+      "shipping_address": {"country": "ES", "city": "Valencia"},
+      "total": 56.00,
+      "currency": "EUR",
+      "payment_method": "ideal"
+    }
+  ]
+}

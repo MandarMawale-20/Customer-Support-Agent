@@ -1,0 +1,25 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Local environment variables and secrets
+.env
+.env
+
+# Generated run artifacts
+runs/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,102 @@
+{
+  "tickets": [
+    {
+      "ticket_id": "TKT-0001",
+      "received_at": "2025-10-15T09:12:00Z",
+      "customer_email": "anna.jansen@example.com",
+      "subject": "How long do refunds take?",
+      "body": "Hi, I returned a shirt last week. When can I expect the money back on my iDEAL? Thanks, Anna."
+    },
+    {
+      "ticket_id": "TKT-0002",
+      "received_at": "2025-10-15T10:03:00Z",
+      "customer_email": "mark.devries@example.com",
+      "subject": "Where is my desk lamp?",
+      "body": "I ordered a walnut desk lamp on Oct 1 (order ORD-10002). Tracking says in transit but it's been days. Can you check?"
+    },
+    {
+      "ticket_id": "TKT-0003",
+      "received_at": "2025-10-15T11:21:00Z",
+      "customer_email": "marie.dubois@example.fr",
+      "subject": "Bag arrived with torn strap",
+      "body": "Bonjour, the leather tote I received yesterday (ORD-10008) has a torn strap. I attached photos. I'd like a refund please — I don't want a replacement."
+    },
+    {
+      "ticket_id": "TKT-0004",
+      "received_at": "2025-10-15T12:00:00Z",
+      "customer_email": "newuser2025@example.com",
+      "subject": "Do you ship to Iceland?",
+      "body": "Hi — do you ship to Iceland and roughly how long would standard shipping take? Also, would I pay any customs?"
+    },
+    {
+      "ticket_id": "TKT-0005",
+      "received_at": "2025-10-15T13:14:00Z",
+      "customer_email": "emma.wright@example.co.uk",
+      "subject": "Where is my cardigan? Tracking shows nothing",
+      "body": "It's been almost 3 weeks since I ordered the grey cardigan (ORD-10004). The Royal Mail page hasn't updated since late September. Can you please refund or send a replacement?"
+    },
+    {
+      "ticket_id": "TKT-0006",
+      "received_at": "2025-10-15T13:48:00Z",
+      "customer_email": "jasper.koning@example.com",
+      "subject": "Headphones stopped working",
+      "body": "I bought a pair of wireless headphones (ORD-10010) back in August. The right earcup has stopped producing sound. They're still within warranty I assume. What can I do?"
+    },
+    {
+      "ticket_id": "TKT-0007",
+      "received_at": "2025-10-15T14:30:00Z",
+      "customer_email": "tom.bakker@example.com",
+      "subject": "Can I still cancel?",
+      "body": "Hi, I just placed an order — ORD-10025 — for the black wireless headphones. Can I cancel before it ships? I changed my mind."
+    },
+    {
+      "ticket_id": "TKT-0008",
+      "received_at": "2025-10-15T15:02:00Z",
+      "customer_email": "unknownuser@example.com",
+      "subject": "Order PKZ-77 not arrived",
+      "body": "I ordered something a couple of weeks ago, order number PKZ-77, and it never came. Please help."
+    },
+    {
+      "ticket_id": "TKT-0009",
+      "received_at": "2025-10-15T15:30:00Z",
+      "customer_email": "lena.schmidt@example.com",
+      "subject": "Return policy question — bought as gift",
+      "body": "Hi, I bought a leather crossbody bag (ORD-10003) as a birthday gift. The recipient doesn't love the colour. Can they return it themselves, or does it need to go through me? It's still within 30 days of delivery."
+    },
+    {
+      "ticket_id": "TKT-0010",
+      "received_at": "2025-10-15T16:11:00Z",
+      "customer_email": "olivia.brown@example.co.uk",
+      "subject": "Refund + compensation for late delivery",
+      "body": "My order ORD-10017 arrived a week late and one of the candles was broken. I want a full refund AND store credit as compensation for the delay. I am extremely unhappy."
+    },
+    {
+      "ticket_id": "TKT-0011",
+      "received_at": "2025-10-15T16:45:00Z",
+      "customer_email": "hannah.muller@example.de",
+      "subject": "Has my refund been processed?",
+      "body": "I returned a linen shirt (ORD-10015) and want to confirm the refund went through. Nothing in my account yet."
+    },
+    {
+      "ticket_id": "TKT-0012",
+      "received_at": "2025-10-15T17:20:00Z",
+      "customer_email": "claire.moreau@example.fr",
+      "subject": "How do I care for the leather tote?",
+      "body": "I just got the black leather tote (ORD-10026) and love it. How should I care for it long-term to keep it looking good?"
+    },
+    {
+      "ticket_id": "TKT-0013",
+      "received_at": "2025-10-15T17:55:00Z",
+      "customer_email": "irene.santos@example.es",
+      "subject": "Want to return a shirt from August",
+      "body": "Hola — I want to return the linen shirt from ORD-10030. I know it's past 30 days but I just never got round to it. Can you make an exception and refund me?"
+    },
+    {
+      "ticket_id": "TKT-0014",
+      "received_at": "2025-10-15T18:30:00Z",
+      "customer_email": "concerned.customer@example.com",
+      "subject": "URGENT: I think my account was hacked",
+      "body": "Someone changed my email and shipping address on my account. I didn't do it. There may be an order placed that isn't mine. Please help, I'm panicking."
+    }
+  ]
+}
