@@ -6,7 +6,7 @@ import os
 import random
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 from fastapi import FastAPI, HTTPException, Query
 
@@ -14,7 +14,7 @@ SIMULATE_FLAKE = os.getenv("SIMULATE_FLAKE", "0") == "1"
 
 DATA_PATH = Path(__file__).parent / "orders.json"
 with DATA_PATH.open() as f:
-    _DATA: dict[str, Any] = json.load(f)
+    _DATA: Dict[str, Any] = json.load(f)
 
 _BY_ID = {o["order_id"]: o for o in _DATA["orders"]}
 
@@ -33,13 +33,13 @@ def _maybe_flake() -> None:
 
 
 @app.get("/healthz")
-def healthz() -> dict[str, str]:
+def healthz() -> Dict[str, str]:
     """Return a basic liveness response."""
     return {"status": "ok"}
 
 
 @app.get("/orders/{order_id}")
-def get_order(order_id: str) -> dict[str, Any]:
+def get_order(order_id: str) -> Dict[str, Any]:
     """Return one order or a 404 when the ID is unknown."""
     _maybe_flake()
     order = _BY_ID.get(order_id)
@@ -54,7 +54,7 @@ def get_order(order_id: str) -> dict[str, Any]:
 @app.get("/orders")
 def list_orders_for_email(
     email: str = Query(..., description="Customer email address to look up."),
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     """Return all orders for a customer email."""
     _maybe_flake()
     matches = [o for o in _DATA["orders"] if o["customer_email"].lower() == email.lower()]
