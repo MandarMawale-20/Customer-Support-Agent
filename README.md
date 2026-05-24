@@ -113,8 +113,8 @@ After testing on the 14 provided tickets, CAG demonstrated superior accuracy. He
 
 | Metric | CAG | RAG |
 |--------|-----|-----|
-| Accuracy on 14 test tickets | 13/14 (93%) | 11/14 (79%) |
-| False hallucinations | 0 | 2 (policy claims not fully in retrieved chunks) |
+| Accuracy on 14 test tickets | 13/14 (93%) | 12/14 (86%) |
+| False hallucinations | 1 | 2 (policy claims not fully in retrieved chunks) |
 | Token cost per request | 2,500-3,500 tokens | 1,500-2,000 tokens |
 | Latency | 3-5s | 4-7s (vector lookup overhead) |
 | Scalability | Limited (KB size < 50 articles recommended) | Unlimited (chunks scale independently) |
@@ -260,6 +260,21 @@ Open the demo in your browser at: `http://localhost:8000/` — the UI lets you p
 - `POST /resolve` — resolve a ticket (SSE stream)
 - `POST /hitl-decision` — submit human approval (`{thread_id, decision: "approved"|"rejected"}`)
 - `GET /runs` and `GET /runs/{ticket_id}` — list and fetch saved traces
+
+### Option 6: Run the unified demo with Docker Compose
+
+Prerequisites: Docker Desktop running and a root `.env` containing `GEMINI_API_KEY`.
+
+Start the single all-in-one demo container (frontend + CAG + RAG + order APIs):
+
+```bash
+cd "M:/Customer-Support Resolution Agent"
+docker compose up --build app
+```
+
+Then open the demo at: `http://localhost:3000`.
+
+Health check (app): `http://localhost:8000/health`
 
 
 ---
