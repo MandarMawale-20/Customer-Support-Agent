@@ -11,7 +11,7 @@ from typing import AsyncGenerator
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -202,6 +202,17 @@ app = FastAPI(
     version="1.0",
     lifespan=lifespan,
 )
+
+
+@app.exception_handler(Exception)
+async def global_error(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=503,
+        content={
+            "error": "Agent temporarily unavailable",
+            "detail": str(exc),
+        },
+    )
 
 app.add_middleware(
     CORSMiddleware,

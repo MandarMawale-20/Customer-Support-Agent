@@ -77,7 +77,7 @@ def get_order_status(order_id: str) -> tuple[Optional[dict], ToolCallTrace]:
             if response.status_code >= 500:
                 last_error = f"HTTP {response.status_code}: {response.text[:200]}"
                 _log_order_api_issue(order_id, "SERVER_ERROR", last_error)
-                final_status = "ERROR"
+                final_status = "SERVICE_UNAVAILABLE"
                 retry_count += 1
                 if attempt < MAX_RETRIES:
                     time.sleep(BACKOFF_BASE * (2 ** attempt))
@@ -88,10 +88,15 @@ def get_order_status(order_id: str) -> tuple[Optional[dict], ToolCallTrace]:
 
         except requests.Timeout:
             last_error = f"Request timed out after {REQUEST_TIMEOUT}s."
-            final_status = "TIMEOUT"
+            final_status = "SERVICE_UNAVAILABLE"
+            break
         except requests.ConnectionError as exc:
             last_error = f"Connection error while calling {url}: {exc}"
-            final_status = "ERROR"
+            final_status = "SERVICE_UNAVAILABLE"
+            break
+        except requests.RequestException as exc:
+            last_error = f"Request error while calling {url}: {exc}"
+            final_status = "SERVICE_UNAVAILABLE"
             break
 
         retry_count += 1
@@ -104,7 +109,11 @@ def get_order_status(order_id: str) -> tuple[Optional[dict], ToolCallTrace]:
         status=final_status,
         retry_count=retry_count,
         reason=f"Planner extracted order ID {order_id} from ticket.",
-        output_summary=f"Failed after {retry_count} retries. Last error: {last_error}",
+        output_summary=(
+            "Order API is unreachable. Ticket escalated for manual review."
+            if final_status == "SERVICE_UNAVAILABLE"
+            else f"Failed after {retry_count} retries. Last error: {last_error}"
+        ),
     )
     _log_order_api_issue(order_id, trace.status, trace.output_summary)
     return None, trace

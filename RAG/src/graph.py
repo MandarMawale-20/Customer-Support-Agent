@@ -36,6 +36,36 @@ def _get_llm() -> ChatGoogleGenerativeAI:
     )
 
 
+def _escalate_for_llm_failure(ticket: dict, trace: TicketExecutionTrace | None, stage: str, error: Exception) -> dict:
+    reason = f"{stage} LLM service unavailable. Human review required."
+    confirmation, esc_trace = escalate(ticket, reason)
+
+    if trace is None:
+        trace = TicketExecutionTrace(
+            ticket_id=ticket["ticket_id"],
+            classification="escalation",
+            sub_tasks=["Escalate because the AI service is unavailable."],
+            decision_trace=[f"{stage} failed: {error}", f"Escalation triggered: {reason}"],
+            tool_calls=[esc_trace],
+            hitl=HITLTrace(triggered=False, action_type="NONE"),
+            workflow_status="ESCALATED",
+            resolution_type="ESCALATED",
+        )
+    else:
+        trace = trace.model_copy(update={
+            "tool_calls": list(trace.tool_calls) + [esc_trace],
+            "decision_trace": list(trace.decision_trace) + [f"{stage} failed: {error}", f"Escalation triggered: {reason}"],
+            "workflow_status": "ESCALATED",
+            "resolution_type": "ESCALATED",
+        })
+
+    return {
+        "final_response": confirmation,
+        "execution_trace": trace,
+        "requires_hitl": False,
+    }
+
+
 def planner_node(state: AgentState) -> dict:
     """Classify the ticket and seed the execution trace."""
     ticket = state["ticket"]
@@ -43,7 +73,10 @@ def planner_node(state: AgentState) -> dict:
 
     structured_llm = llm.with_structured_output(PlannerResponse)
     prompt = build_planner_prompt(ticket)
-    planner_output = structured_llm.invoke(prompt)
+    try:
+        planner_output = structured_llm.invoke(prompt)
+    except Exception as error:
+        return _escalate_for_llm_failure(state["ticket"], None, "Planner", error)
 
     trace = TicketExecutionTrace(
         ticket_id=ticket["ticket_id"],
@@ -159,7 +192,7 @@ def resolver_node(state: AgentState) -> dict:
     
     # Guard: if order lookup was required but failed or ID was invalid, escalate
     if planner.requires_order_lookup and not state.get("order_data"):
-        if order_trace and order_trace.status in ("404_NOT_FOUND", "ERROR", "TIMEOUT"):
+        if order_trace and order_trace.status in ("404_NOT_FOUND", "SERVICE_UNAVAILABLE", "ERROR", "TIMEOUT"):
             reason = f"Order lookup failed: {order_trace.status}. Requires human review before composing response."
             confirmation, esc_trace = escalate(state["ticket"], reason)
             tool_calls = list(trace.tool_calls) + [esc_trace]
@@ -204,7 +237,10 @@ def resolver_node(state: AgentState) -> dict:
         order_trace=state.get("order_tool_trace"),
         guardrail_feedback=state.get("guardrail_feedback"),
     )
-    res: ResolverResponse = structured_llm.invoke(prompt)
+    try:
+        res: ResolverResponse = structured_llm.invoke(prompt)
+    except Exception as error:
+        return _escalate_for_llm_failure(state["ticket"], trace, "Resolver", error)
     reply = res.customer_reply.strip()
     requires_hitl = res.requires_hitl
     hitl_action_type = res.hitl_action or "NONE"
@@ -299,9 +335,9 @@ def _validate_reply(
         if not re.search(r"(not found|could not find|cannot find|unable to find)", reply, re.IGNORECASE):
             return False, "Order lookup returned 404; reply must state the order was not found and request confirmation."
 
-    if order_trace and order_trace.status in ("ERROR", "TIMEOUT"):
-        if not re.search(r"(system|technical|error|issue)", reply, re.IGNORECASE):
-            return False, "Order lookup failed; reply must acknowledge a system error and avoid speculation."
+    if order_trace and order_trace.status in ("ERROR", "TIMEOUT", "SERVICE_UNAVAILABLE"):
+        if not re.search(r"(system|technical|error|issue|temporary)", reply, re.IGNORECASE):
+            return False, "Order lookup failed; reply must acknowledge a temporary system issue and avoid speculation."
 
     if classification == "informational":
         if re.search(r"order (id|number)", reply, re.IGNORECASE):

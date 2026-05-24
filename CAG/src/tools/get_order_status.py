@@ -50,11 +50,35 @@ def get_order_status(order_id: str) -> tuple[Optional[dict], ToolCallTrace]:
     try:
         response = SESSION.get(url, timeout=REQUEST_TIMEOUT)
     except requests.Timeout:
-        last_error = f"Request timed out after {REQUEST_TIMEOUT}s."
-        response = None
+        trace = ToolCallTrace(
+            tool_name="get_order_status",
+            input_args={"order_id": order_id},
+            status="SERVICE_UNAVAILABLE",
+            retry_count=0,
+            reason=f"Planner extracted order ID {order_id} from ticket.",
+            output_summary="Order API is unreachable. Ticket escalated for manual review.",
+        )
+        return None, trace
     except requests.ConnectionError:
-        last_error = "Could not connect to order API (is it running on port 8080?)."
-        response = None
+        trace = ToolCallTrace(
+            tool_name="get_order_status",
+            input_args={"order_id": order_id},
+            status="SERVICE_UNAVAILABLE",
+            retry_count=0,
+            reason=f"Planner extracted order ID {order_id} from ticket.",
+            output_summary="Order API is unreachable. Ticket escalated for manual review.",
+        )
+        return None, trace
+    except requests.RequestException as exc:
+        trace = ToolCallTrace(
+            tool_name="get_order_status",
+            input_args={"order_id": order_id},
+            status="SERVICE_UNAVAILABLE",
+            retry_count=0,
+            reason=f"Planner extracted order ID {order_id} from ticket.",
+            output_summary=f"Order API is unreachable. Ticket escalated for manual review. Detail: {exc}",
+        )
+        return None, trace
 
     retry_count = _retry_count(response)
 
@@ -86,6 +110,17 @@ def get_order_status(order_id: str) -> tuple[Optional[dict], ToolCallTrace]:
             retry_count=retry_count,
             reason=f"Planner extracted order ID {order_id} from ticket.",
             output_summary=f"Order {order_id} does not exist in the system.",
+        )
+        return None, trace
+
+    if response is not None and response.status_code >= 500:
+        trace = ToolCallTrace(
+            tool_name="get_order_status",
+            input_args={"order_id": order_id},
+            status="SERVICE_UNAVAILABLE",
+            retry_count=retry_count,
+            reason=f"Planner extracted order ID {order_id} from ticket.",
+            output_summary="Order API is unreachable. Ticket escalated for manual review.",
         )
         return None, trace
 

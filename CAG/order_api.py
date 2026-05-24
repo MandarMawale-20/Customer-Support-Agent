@@ -59,3 +59,9 @@ def list_orders_for_email(
     _maybe_flake()
     matches = [o for o in _DATA["orders"] if o["customer_email"].lower() == email.lower()]
     return {"email": email, "count": len(matches), "orders": matches}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8080)

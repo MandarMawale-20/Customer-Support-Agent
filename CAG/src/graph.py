@@ -37,6 +37,36 @@ def _get_llm() -> ChatGoogleGenerativeAI:
     )
 
 
+def _escalate_for_llm_failure(ticket: dict, trace: TicketExecutionTrace | None, stage: str, error: Exception) -> dict:
+    reason = f"{stage} LLM service unavailable. Human review required."
+    confirmation, esc_trace = escalate(ticket, reason)
+
+    if trace is None:
+        trace = TicketExecutionTrace(
+            ticket_id=ticket["ticket_id"],
+            classification="escalation",
+            sub_tasks=["Escalate because the AI service is unavailable."],
+            decision_trace=[f"{stage} failed: {error}", f"Escalation triggered: {reason}"],
+            tool_calls=[esc_trace],
+            hitl=HITLTrace(triggered=False, action_type="NONE"),
+            workflow_status="ESCALATED",
+            resolution_type="ESCALATED",
+        )
+    else:
+        trace = trace.model_copy(update={
+            "tool_calls": list(trace.tool_calls) + [esc_trace],
+            "decision_trace": list(trace.decision_trace) + [f"{stage} failed: {error}", f"Escalation triggered: {reason}"],
+            "workflow_status": "ESCALATED",
+            "resolution_type": "ESCALATED",
+        })
+
+    return {
+        "final_response": confirmation,
+        "execution_trace": trace,
+        "requires_hitl": False,
+    }
+
+
 def planner_node(state: AgentState) -> dict:
     """Classify the ticket and seed the execution trace."""
     ticket = state["ticket"]
@@ -44,7 +74,10 @@ def planner_node(state: AgentState) -> dict:
 
     structured_llm = llm.with_structured_output(PlannerResponse)
     prompt = build_planner_prompt(ticket)
-    planner_output = structured_llm.invoke(prompt)
+    try:
+        planner_output = structured_llm.invoke(prompt)
+    except Exception as error:
+        return _escalate_for_llm_failure(state["ticket"], None, "Planner", error)
 
     trace = TicketExecutionTrace(
         ticket_id=ticket["ticket_id"],
@@ -202,8 +235,8 @@ def order_error_node(state: AgentState) -> dict:
     decision_trace.append("Escalation triggered: order lookup error")
 
     reply = (
-        "We hit a system error while retrieving your order details. "
-        "We have escalated this to our human support team and will update you shortly."
+        "We hit a temporary system issue while retrieving your order details. "
+        "We have escalated this to our human support team and they will follow up shortly."
     )
 
     updated_trace = trace.model_copy(update={
@@ -260,7 +293,10 @@ def resolver_node(state: AgentState) -> dict:
         planner_output=state["planner_output"],
     )
     structured_llm = llm.with_structured_output(ResolverResponse)
-    response = structured_llm.invoke(prompt)
+    try:
+        response = structured_llm.invoke(prompt)
+    except Exception as error:
+        return _escalate_for_llm_failure(state["ticket"], trace, "Resolver", error)
     reply = response.customer_reply.strip()
 
     requires_hitl = response.requires_financial_action or response.hitl_action is not None

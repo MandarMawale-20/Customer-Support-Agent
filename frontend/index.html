@@ -1,827 +1,999 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Customer Support Agent Demo</title>
-    <style>
-      :root {
-        --bg: #f4f1ea;
-        --panel: rgba(255, 255, 255, 0.84);
-        --panel-strong: #ffffff;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --line: rgba(31, 41, 55, 0.12);
-        --accent: #2563eb;
-        --accent-soft: #dbeafe;
-        --success: #0f766e;
-        --danger: #b91c1c;
-        --shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
-        --radius: 18px;
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Support Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f2ed;
+      --surface: #faf8f5;
+      --border: #d4cfc8;
+      --border-dark: #a39e97;
+      --text: #1a1714;
+      --muted: #6b6560;
+      --accent: #c0392b;
+      --accent-dim: #f0e6e4;
+      --green: #1a6b3c;
+      --green-dim: #e4f0ea;
+      --amber: #8a6200;
+      --amber-dim: #f5edda;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-rows: 48px 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 2px solid var(--text);
+      background: var(--text);
+      color: #f5f2ed;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .header-sep {
+      width: 1px;
+      height: 20px;
+      background: rgba(245,242,237,0.25);
+    }
+
+    .header-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(245,242,237,0.55);
+      letter-spacing: 0.06em;
+    }
+
+    .mode-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid rgba(245,242,237,0.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .mode-btn {
+      padding: 5px 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: transparent;
+      color: rgba(245,242,237,0.55);
+      border: none;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .mode-btn.active {
+      background: rgba(245,242,237,0.15);
+      color: #f5f2ed;
+    }
+
+    .mode-btn:hover:not(.active) {
+      background: rgba(245,242,237,0.08);
+      color: rgba(245,242,237,0.8);
+    }
+
+    .status-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(245,242,237,0.6);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #6b6560;
+      transition: background 0.3s;
+    }
+
+    .status-dot.idle   { background: #6b6560; }
+    .status-dot.busy   { background: var(--amber); animation: pulse 1s infinite; }
+    .status-dot.ok     { background: var(--green); }
+    .status-dot.hitl   { background: var(--accent); animation: pulse 1s infinite; }
+    .status-dot.error  { background: var(--accent); }
+    .status-dot.warn   { background: var(--amber); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    .body {
+      display: grid;
+      grid-template-columns: 260px 1fr 320px;
+      overflow: hidden;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+
+    .col:last-child { border-right: none; }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .col-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .col-count {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .ticket-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 6px;
+    }
+
+    .ticket-item {
+      padding: 10px 10px 11px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s;
+      margin-bottom: 2px;
+    }
+
+    .ticket-item:hover {
+      background: var(--surface);
+      border-color: var(--border);
+    }
+
+    .ticket-item.selected {
+      background: var(--surface);
+      border-color: var(--border-dark);
+      border-left: 3px solid var(--text);
+    }
+
+    .ticket-item.status-completed  .t-id { color: var(--green); }
+    .ticket-item.status-escalated  .t-id { color: var(--accent); }
+    .ticket-item.status-hitl       .t-id { color: var(--amber); }
+
+    .t-id {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .t-subject {
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    .t-badge {
+      display: inline-block;
+      margin-top: 5px;
+      padding: 2px 6px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
+    .badge-completed { background: var(--green-dim); color: var(--green); }
+    .badge-escalated { background: var(--accent-dim); color: var(--accent); }
+    .badge-hitl      { background: var(--amber-dim); color: var(--amber); }
+    .badge-pending   { background: #ebe8e2; color: var(--muted); }
+
+    .mid-col {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ticket-detail {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .detail-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .detail-id {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+    }
+
+    .detail-email {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .detail-subject {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .detail-body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #3a3530;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      white-space: pre-wrap;
+    }
+
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .btn {
+      padding: 7px 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--border-dark);
+      border-radius: 2px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    .btn:hover { background: var(--bg); border-color: var(--text); }
+
+    .btn-primary {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    .btn-primary:hover { background: #3a3530; }
+
+    .btn-approve {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .btn-reject {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-approve:hover { background: #155c32; }
+    .btn-reject:hover { background: #a02e24; }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .action-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .reply-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+    }
+
+    .reply-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .reply-text {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      min-height: 80px;
+    }
+
+    .reply-placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .citations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .citation-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .cite {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border: 1px solid var(--border-dark);
+      border-radius: 2px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .hitl-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-top: 2px solid var(--accent);
+      background: var(--accent-dim);
+      flex-shrink: 0;
+    }
+
+    .hitl-bar.visible { display: flex; }
+
+    .hitl-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .trace-col {
+      background: #1a1714;
+      color: #c8c4be;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .trace-col .col-header {
+      background: #232019;
+      border-bottom-color: #3a3530;
+    }
+
+    .trace-col .col-title { color: #6b6560; }
+
+    .trace-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .trace-empty {
+      color: #4a4540;
+      padding: 14px 4px;
+      font-style: italic;
+    }
+
+    .trace-section {
+      margin-bottom: 14px;
+    }
+
+    .trace-section-title {
+      color: #6b6560;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #2e2b27;
+      margin-bottom: 7px;
+    }
+
+    .trace-line {
+      padding: 3px 0;
+      color: #a8a49e;
+    }
+
+    .trace-line.ok     { color: #4aba7a; }
+    .trace-line.warn   { color: #d4a017; }
+    .trace-line.error  { color: #e05c4a; }
+    .trace-line.dim    { color: #4a4540; }
+    .trace-line.white  { color: #e8e4de; }
+
+    .trace-tool {
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: #232019;
+      border-left: 2px solid #3a3530;
+      border-radius: 1px;
+    }
+
+    .trace-tool .tool-name { color: #e8e4de; font-weight: 600; }
+    .trace-tool .tool-status-ok   { color: #4aba7a; }
+    .trace-tool .tool-status-err  { color: #e05c4a; }
+    .trace-tool .tool-status-warn { color: #d4a017; }
+    .trace-tool .tool-summary { color: #6b6560; margin-top: 3px; }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .trace-col ::-webkit-scrollbar-thumb { background: #3a3530; }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 8px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .empty-arrow {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 1100px) {
+      .body {
+        grid-template-columns: 220px 1fr 260px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        grid-template-rows: auto 1fr;
+        height: 100dvh;
       }
 
-      * { box-sizing: border-box; }
-
-      html, body { height: 100%; }
-
-      body {
-        margin: 0;
-        color: var(--text);
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background:
-          radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 28%),
-          radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 24%),
-          linear-gradient(180deg, #f8f4ec 0%, #eef2ff 100%);
-      }
-
-      .app {
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 300px minmax(0, 1fr);
-      }
-
-      .sidebar {
-        padding: 22px;
-        border-right: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.55);
-        backdrop-filter: blur(16px);
-      }
-
-      .brand {
-        margin-bottom: 18px;
-        padding: 18px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.72));
-        box-shadow: var(--shadow);
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        font-size: 12px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      .eyebrow::before {
-        content: "";
-        width: 9px;
-        height: 9px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent), #7c3aed);
-        box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12);
-      }
-
-      .brand h1 {
-        margin: 0;
-        font-size: 22px;
-        line-height: 1.15;
-      }
-
-      .brand p {
-        margin: 10px 0 0;
-        color: var(--muted);
-        line-height: 1.5;
-        font-size: 14px;
-      }
-
-      .control-card,
-      .tickets-card,
-      .detail-card,
-      .stream-card,
-      .trace-card {
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--panel);
-        box-shadow: var(--shadow);
-      }
-
-      .control-card {
-        padding: 16px;
-        margin-bottom: 18px;
-      }
-
-      .control-label,
-      .section-label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      select, button {
-        font: inherit;
-      }
-
-      select {
-        width: 100%;
-        padding: 12px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(31, 41, 55, 0.15);
-        background: var(--panel-strong);
-        color: var(--text);
-        outline: none;
-      }
-
-      select:focus,
-      button:focus-visible {
-        outline: 3px solid rgba(37, 99, 235, 0.18);
-        outline-offset: 2px;
-      }
-
-      .mini-actions {
-        display: grid;
-        gap: 10px;
-        margin-top: 14px;
-      }
-
-      .mini-button,
-      .primary-button,
-      .ghost-button,
-      .danger-button {
-        border: 1px solid transparent;
-        border-radius: 14px;
-        padding: 11px 14px;
-        cursor: pointer;
-        transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease;
-      }
-
-      .mini-button:hover,
-      .primary-button:hover,
-      .ghost-button:hover,
-      .danger-button:hover {
-        transform: translateY(-1px);
-      }
-
-      .mini-button,
-      .ghost-button {
-        background: rgba(255, 255, 255, 0.82);
-        border-color: rgba(31, 41, 55, 0.12);
-        color: var(--text);
-      }
-
-      .primary-button {
-        background: linear-gradient(135deg, var(--accent), #1d4ed8);
-        color: white;
-        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
-      }
-
-      .danger-button {
-        background: linear-gradient(135deg, #ef4444, #b91c1c);
-        color: white;
-      }
-
-      .main {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
-
-      .toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 22px 24px 10px;
-      }
-
-      .toolbar-title {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .toolbar-title strong {
-        font-size: 22px;
-        letter-spacing: -0.02em;
-      }
-
-      .toolbar-title span {
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 14px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.82);
-        border: 1px solid var(--line);
-        color: var(--text);
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-      }
-
-      .status-dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 999px;
-        background: var(--success);
-        box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.12);
-      }
-
-      .content {
-        display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
-        gap: 18px;
-        padding: 8px 24px 24px;
-        min-width: 0;
-        flex: 1;
-      }
-
-      .tickets-card {
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        overflow: hidden;
-      }
-
-      .tickets-header,
-      .detail-header,
-      .stream-header {
-        padding: 16px 16px 12px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .tickets-header h2,
-      .detail-header h2,
-      .stream-header h2 {
-        margin: 0;
-        font-size: 15px;
-      }
-
-      .tickets-header p,
-      .detail-header p,
-      .stream-header p {
-        margin: 6px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.4;
-      }
-
-      .tickets {
-        overflow: auto;
-        padding: 10px;
-      }
-
-      .ticket {
-        padding: 12px 12px 13px;
-        border-radius: 14px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
-      }
-
-      .ticket:hover {
-        transform: translateY(-1px);
-        background: rgba(255, 255, 255, 0.72);
-      }
-
-      .ticket.active {
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(255, 255, 255, 0.96));
-        border-color: rgba(37, 99, 235, 0.18);
-      }
-
-      .ticket-id {
-        display: block;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--accent);
-        margin-bottom: 4px;
-      }
-
-      .ticket-subject {
-        display: block;
-        line-height: 1.4;
-        font-weight: 600;
-      }
-
-      .detail-card {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        overflow: hidden;
-      }
-
-      .detail-body {
-        padding: 16px;
-        display: grid;
-        gap: 16px;
-      }
-
-      .ticket-meta {
-        padding: 14px 14px 16px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(31, 41, 55, 0.09);
-        margin-bottom: 16px;
-        white-space: pre-wrap;
-        line-height: 1.55;
-      }
-
-      .actions-row {
-        display: flex;
+      header {
         flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-
-      .status-text {
-        margin-left: auto;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .stream-card {
-        overflow: hidden;
-      }
-
-      .reply-card,
-      .trace-card {
-        overflow: hidden;
-      }
-
-      .reply-box,
-      .trace-box {
-        min-height: 260px;
-        padding: 16px;
-        line-height: 1.55;
-      }
-
-      .reply-box {
-        white-space: pre-wrap;
-        color: #0f172a;
-        background:
-          linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.96));
-      }
-
-      .reply-main {
-        font-size: 15px;
-        white-space: pre-wrap;
-      }
-
-      .citation-strip {
-        display: flex;
-        flex-wrap: wrap;
         gap: 8px;
-        margin-top: 14px;
-        padding-top: 14px;
-        border-top: 1px solid var(--line);
-      }
-
-      .citation-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 10px;
-        border-radius: 999px;
-        background: var(--accent-soft);
-        color: #1d4ed8;
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      .citation-pill::before {
-        content: "";
-        width: 7px;
-        height: 7px;
-        border-radius: 999px;
-        background: currentColor;
-      }
-
-      .trace-box {
-        background: rgba(15, 23, 42, 0.97);
-        color: #e5e7eb;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-        white-space: pre-wrap;
-      }
-
-      .trace-box .muted {
-        color: #94a3b8;
-      }
-
-      .trace-list {
-        display: grid;
-        gap: 10px;
-      }
-
-      .trace-item {
         padding: 10px 12px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(148, 163, 184, 0.15);
       }
 
-      .trace-item-title {
-        display: block;
-        margin-bottom: 6px;
-        color: #f8fafc;
-        font-weight: 700;
+      .header-left {
+        width: 100%;
       }
 
-      .trace-item-body {
-        color: #cbd5e1;
-        white-space: pre-wrap;
+      .body {
+        grid-template-columns: 1fr;
+        grid-template-rows: 220px minmax(360px, 1fr) 220px;
       }
 
-      .hitl-panel {
+      .col {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .trace-col {
         display: flex;
-        gap: 10px;
+      }
+
+      .action-bar {
         flex-wrap: wrap;
-        padding: 14px 16px 16px;
-        border-top: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.7);
       }
 
-      .hitl-note {
-        margin-top: 10px;
-        color: var(--muted);
-        font-size: 13px;
+      .action-status {
+        margin-left: 0;
+        width: 100%;
       }
 
-      @media (max-width: 1120px) {
-        .app {
-          grid-template-columns: 1fr;
-        }
-
-        .sidebar {
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
-        }
-
-        .content {
-          grid-template-columns: 1fr;
-        }
+      .detail-meta {
+        flex-wrap: wrap;
       }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
 
-      @media (max-width: 720px) {
-        .sidebar,
-        .toolbar,
-        .content {
-          padding-left: 14px;
-          padding-right: 14px;
-        }
+  <header>
+    <div class="header-left">
+      <div class="logo">Support Agent</div>
+      <div class="header-sep"></div>
+      <div class="header-sub">v2.0 · CAG / RAG</div>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnCAG" onclick="setMode('cag')">CAG</button>
+      <button class="mode-btn" id="btnRAG" onclick="setMode('rag')">RAG</button>
+    </div>
+    <div class="status-chip">
+      <div class="status-dot idle" id="statusDot"></div>
+      <span id="statusLabel">Idle</span>
+    </div>
+  </header>
 
-        .toolbar {
-          flex-direction: column;
-          align-items: stretch;
-        }
+  <div class="body">
 
-        .status-pill {
-          width: fit-content;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="eyebrow">Support Ops Demo</div>
-          <h1>Customer Support Agent</h1>
-          <p>Switch between CAG and RAG, inspect tickets, and watch the reply stream update in real time.</p>
-        </div>
-
-        <div class="control-card">
-          <label class="control-label" for="modeSelect">Agent mode</label>
-          <select id="modeSelect">
-            <option value="cag">CAG</option>
-            <option value="rag">RAG</option>
-          </select>
-          <div class="mini-actions">
-            <button class="mini-button" id="reloadTickets">Load Tickets</button>
-          </div>
-        </div>
-
-        <div class="control-card">
-          <span class="section-label">What this demo shows</span>
-          <p class="hitl-note" style="margin:0;">
-            A compact ticket queue, grounded answers from the selected backend, and a human approval pause for sensitive actions.
-          </p>
-        </div>
-      </aside>
-
-      <main class="main">
-        <div class="toolbar">
-          <div class="toolbar-title">
-            <strong>Customer Support Resolution Agent</strong>
-            <span>Choose a ticket, resolve it, and review the streamed reasoning trail.</span>
-          </div>
-          <div class="status-pill"><span class="status-dot"></span><span id="status">Idle</span></div>
-        </div>
-
-        <section class="content">
-          <div class="tickets-card">
-            <div class="tickets-header">
-              <h2>Tickets</h2>
-              <p>Select a case from the list to load its details.</p>
-            </div>
-            <div class="tickets" id="tickets"></div>
-          </div>
-
-          <div class="detail-card">
-            <div class="detail-header">
-              <h2>Ticket Details</h2>
-              <p>Review the customer message before triggering resolution.</p>
-            </div>
-            <div class="detail-body">
-              <div id="ticketMeta" class="ticket-meta">No ticket selected</div>
-
-              <div class="actions-row">
-                <button class="primary-button" id="runResolve">Resolve Ticket</button>
-                <button class="ghost-button" id="simulateAll">Simulate All</button>
-                <span class="status-text" id="statusText">Ready</span>
-              </div>
-
-              <div class="reply-card stream-card">
-                <div class="stream-header">
-                  <h2>Agent Reply</h2>
-                  <p>This is the actual customer-facing reply. The citations appear at the end.</p>
-                </div>
-                <div class="reply-box" id="replyBox">
-                  <div class="reply-main" id="replyText">Waiting for a ticket resolution...</div>
-                  <div class="citation-strip" id="citationStrip" style="display:none"></div>
-                </div>
-                <div id="hitlActions" class="hitl-panel" style="display:none">
-                  <button class="primary-button" id="approve">Approve</button>
-                  <button class="danger-button" id="reject">Reject</button>
-                </div>
-              </div>
-
-              <div class="trace-card">
-                <div class="stream-header">
-                  <h2>Traceability</h2>
-                  <p>Reasoning steps, tool usage, and saved run details from the backend trace.</p>
-                </div>
-                <div class="trace-box" id="traceBox">
-                  <div class="muted">Run trace will appear here after you resolve a ticket.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+    <div class="col" style="background:var(--bg)">
+      <div class="col-header">
+        <span class="col-title">Tickets</span>
+        <span class="col-count" id="ticketCount">-</span>
+      </div>
+      <div class="ticket-list" id="ticketList">
+        <div style="padding:14px 6px; font-family:var(--mono); font-size:11px; color:var(--muted)">Loading...</div>
       </div>
     </div>
 
-    <script>
-      const ticketsEl = document.getElementById('tickets');
-      const ticketMeta = document.getElementById('ticketMeta');
-      const modeSelect = document.getElementById('modeSelect');
-      const statusEl = document.getElementById('status');
-      const statusTextEl = document.getElementById('statusText');
-      const hitlEl = document.getElementById('hitlActions');
-      const replyTextEl = document.getElementById('replyText');
-      const citationStripEl = document.getElementById('citationStrip');
-      const traceBoxEl = document.getElementById('traceBox');
+    <div class="mid-col">
 
-      let tickets = [];
-      let selectedTicket = null;
-      let activeThreadId = null;
+      <div id="detailPanel" style="display:none">
+        <div class="ticket-detail">
+          <div class="detail-meta">
+            <span class="detail-id" id="dId">-</span>
+            <span class="detail-email" id="dEmail">-</span>
+          </div>
+          <div class="detail-subject" id="dSubject">-</div>
+          <div class="detail-body" id="dBody">-</div>
+        </div>
+        <div class="action-bar">
+          <button class="btn btn-primary" id="btnResolve" onclick="resolveSelected()">Resolve</button>
+          <button class="btn" id="btnSimAll" onclick="simulateAll()">Run All</button>
+          <span class="action-status" id="actionStatus">-</span>
+        </div>
+      </div>
 
-      async function loadTickets() {
-        const response = await fetch('/tickets');
-        const data = await response.json();
-        tickets = data.tickets || [];
-        renderTickets();
+      <div class="empty-state" id="emptyState">
+        <div class="empty-arrow">&larr;</div>
+        <div>Select a ticket to begin</div>
+      </div>
+
+      <div class="reply-area" id="replyArea" style="display:none">
+        <div class="reply-label">Agent Reply</div>
+        <div class="reply-text" id="replyText"><span class="reply-placeholder">Reply will appear here after resolution.</span></div>
+        <div class="citations" id="citationArea" style="display:none">
+          <div class="citation-label">Sources</div>
+        </div>
+      </div>
+
+      <div class="hitl-bar" id="hitlBar">
+        <span class="hitl-label">Awaiting approval</span>
+        <button class="btn btn-approve" onclick="sendDecision('approved')">Approve</button>
+        <button class="btn btn-reject"  onclick="sendDecision('rejected')">Reject</button>
+      </div>
+
+    </div>
+
+    <div class="col trace-col">
+      <div class="col-header">
+        <span class="col-title">Traceability</span>
+        <span class="col-count" id="traceCount" style="color:#4a4540">-</span>
+      </div>
+      <div class="trace-scroll" id="traceScroll">
+        <div class="trace-empty">No run yet.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let mode = 'cag';
+  let tickets = [];
+  let selected = null;
+  let activeThreadId = null;
+  let runResultsByMode = { cag: {}, rag: {} };
+
+  function getModeResults() {
+    return runResultsByMode[mode] || {};
+  }
+
+  function getCachedRun(ticketId) {
+    return getModeResults()[ticketId];
+  }
+
+  function setCachedRun(ticketId, data) {
+    getModeResults()[ticketId] = data;
+  }
+
+  function normalizeText(value) {
+    return String(value || '')
+      .replace(/â€”|â€“/g, '-')
+      .replace(/â€™/g, "'")
+      .replace(/â€œ|â€\x9d/g, '"');
+  }
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('btnCAG').classList.toggle('active', m === 'cag');
+    document.getElementById('btnRAG').classList.toggle('active', m === 'rag');
+    renderList();
+
+    if (selected) {
+      const cached = getCachedRun(selected.ticket_id);
+      if (cached) {
+        renderReply(cached);
+        renderTrace(cached);
+        const ws = cached.execution_trace?.workflow_status || 'done';
+        setStatus(ws === 'COMPLETED' ? 'ok' : ws === 'ESCALATED' ? 'error' : 'warn', ws);
+        document.getElementById('actionStatus').textContent = ws;
+      } else {
+        clearReplyView();
+        document.getElementById('replyText').innerHTML = '<span class="reply-placeholder">Press Resolve to process this ticket in the selected mode.</span>';
+        document.getElementById('traceScroll').innerHTML = '<div class="trace-empty">No run yet.</div>';
+        document.getElementById('actionStatus').textContent = '-';
+        setStatus('idle', 'Idle');
       }
+    }
+  }
 
-      function renderTickets() {
-        ticketsEl.innerHTML = '';
-        tickets.forEach(ticket => {
-          const item = document.createElement('div');
-          item.className = `ticket${selectedTicket?.ticket_id === ticket.ticket_id ? ' active' : ''}`;
-          item.innerHTML = `<span class="ticket-id">${ticket.ticket_id}</span><span class="ticket-subject">${ticket.subject}</span>`;
-          item.onclick = () => {
-            selectedTicket = ticket;
-            renderTickets();
-            renderSelectedTicket();
-          };
-          ticketsEl.appendChild(item);
-        });
-      }
+  function setStatus(state, label) {
+    const dot = document.getElementById('statusDot');
+    dot.className = 'status-dot ' + state;
+    document.getElementById('statusLabel').textContent = label;
+  }
 
-      function renderSelectedTicket() {
-        if (!selectedTicket) {
-          ticketMeta.textContent = 'No ticket selected';
-          return;
-        }
+  async function loadTickets() {
+    try {
+      const r = await fetch('/tickets');
+      const d = await r.json();
+      tickets = d.tickets || [];
+    } catch {
+      tickets = [];
+    }
+    renderList();
+    document.getElementById('ticketCount').textContent = tickets.length;
+  }
 
-        ticketMeta.innerHTML = `<strong>${selectedTicket.ticket_id}</strong> — ${selectedTicket.customer_email}\n\n${selectedTicket.body}`;
-      }
+  function renderList() {
+    const el = document.getElementById('ticketList');
+    el.innerHTML = '';
+    tickets.forEach(t => {
+      const run = getCachedRun(t.ticket_id);
+      const ws = run?.execution_trace?.workflow_status;
+      let statusClass = '', badgeClass = 'badge-pending', badgeLabel = 'Pending';
+      if (ws === 'COMPLETED')    { statusClass = 'status-completed'; badgeClass = 'badge-completed'; badgeLabel = 'Done'; }
+      else if (ws === 'ESCALATED') { statusClass = 'status-escalated'; badgeClass = 'badge-escalated'; badgeLabel = 'Escalated'; }
+      else if (ws === 'WAITING_HUMAN') { statusClass = 'status-hitl'; badgeClass = 'badge-hitl'; badgeLabel = 'Review'; }
 
-      function setStatus(message, detail) {
-        statusEl.textContent = message;
-        statusTextEl.textContent = detail || '';
-      }
+      const div = document.createElement('div');
+      div.className = `ticket-item ${statusClass}${selected?.ticket_id === t.ticket_id ? ' selected' : ''}`;
+      div.innerHTML = `
+        <div class="t-id">${t.ticket_id}</div>
+        <div class="t-subject">${normalizeText(t.subject)}</div>
+        ${ws ? `<span class="t-badge ${badgeClass}">${badgeLabel}</span>` : ''}
+      `;
+      div.onclick = () => selectTicket(t);
+      el.appendChild(div);
+    });
+  }
 
-      function clearRunView() {
-        replyTextEl.textContent = 'Working on the reply...';
-        citationStripEl.innerHTML = '';
-        citationStripEl.style.display = 'none';
-        traceBoxEl.innerHTML = '<div class="muted">Waiting for the saved run...</div>';
-        hitlEl.style.display = 'none';
-        activeThreadId = null;
-      }
+  // ── Select ticket ──────────────────────────────────────────────────────────
+  function selectTicket(t) {
+    selected = t;
+    renderList();
 
-      function appendTraceCard(title, body) {
-        if (traceBoxEl.querySelector('.muted')) {
-          traceBoxEl.innerHTML = '';
-        }
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('detailPanel').style.display = 'block';
+    document.getElementById('replyArea').style.display = 'flex';
+    document.getElementById('replyArea').style.flexDirection = 'column';
 
-        const card = document.createElement('div');
-        card.className = 'trace-item';
-        card.innerHTML = `<span class="trace-item-title">${title}</span><div class="trace-item-body">${body}</div>`;
-        traceBoxEl.appendChild(card);
-      }
+    document.getElementById('dId').textContent = t.ticket_id;
+    document.getElementById('dEmail').textContent = t.customer_email;
+    document.getElementById('dSubject').textContent = normalizeText(t.subject);
+    document.getElementById('dBody').textContent = normalizeText(t.body);
+    document.getElementById('actionStatus').textContent = '-';
 
-      function renderCitations(citations) {
-        citationStripEl.innerHTML = '';
-        if (!citations.length) {
-          citationStripEl.style.display = 'none';
-          return;
-        }
+    const cached = getCachedRun(t.ticket_id);
+    if (cached) {
+      renderReply(cached);
+      renderTrace(cached);
+    } else {
+      document.getElementById('replyText').innerHTML = '<span class="reply-placeholder">Press Resolve to process this ticket.</span>';
+      document.getElementById('citationArea').style.display = 'none';
+      document.getElementById('traceScroll').innerHTML = '<div class="trace-empty">No run yet.</div>';
+      document.getElementById('hitlBar').classList.remove('visible');
+    }
+  }
 
-        citations.forEach(citation => {
-          const pill = document.createElement('span');
-          pill.className = 'citation-pill';
-          pill.textContent = citation;
-          citationStripEl.appendChild(pill);
-        });
-        citationStripEl.style.display = 'flex';
-      }
+  function renderReply(data) {
+    const reply = data.final_response || '';
+    document.getElementById('replyText').textContent = reply || 'No reply generated.';
 
-      function extractCitations(data) {
-        const executionTrace = data.execution_trace || {};
-        const cited = Array.isArray(executionTrace.citations_used) ? executionTrace.citations_used : [];
-        const reply = data.final_response || '';
-        const fromReply = reply.match(/kb-\d{3}/g) || [];
-        return Array.from(new Set([...cited, ...fromReply]));
-      }
+    const citations = extractCitations(data);
+    const ca = document.getElementById('citationArea');
+    if (citations.length) {
+      ca.style.display = 'flex';
+      ca.innerHTML = '<div class="citation-label">Sources</div>';
+      citations.forEach(c => {
+        const span = document.createElement('span');
+        span.className = 'cite';
+        span.textContent = c;
+        ca.appendChild(span);
+      });
+    } else {
+      ca.style.display = 'none';
+    }
+  }
 
-      function formatList(items, emptyText) {
-        if (!items.length) return emptyText;
-        return `<ul class="trace-list">${items.map(item => `<li class="trace-item"><div class="trace-item-body">${item}</div></li>`).join('')}</ul>`;
-      }
+  function extractCitations(data) {
+    const et = data.execution_trace || {};
+    const fromTrace = Array.isArray(et.citations_used) ? et.citations_used : [];
+    const fromReply = (data.final_response || '').match(/kb-\d{3}/g) || [];
+    return [...new Set([...fromTrace, ...fromReply])].sort();
+  }
 
-      function renderSavedRun(data) {
-        const executionTrace = data.execution_trace || {};
-        const reply = data.final_response || '';
-        const decisionTrace = Array.isArray(executionTrace.decision_trace) ? executionTrace.decision_trace : [];
-        const toolCalls = Array.isArray(executionTrace.tool_calls) ? executionTrace.tool_calls : [];
+  function renderTrace(data) {
+    const et = data.execution_trace || {};
+    const el = document.getElementById('traceScroll');
+    el.innerHTML = '';
 
-        replyTextEl.textContent = reply || 'No reply available.';
-        renderCitations(extractCitations(data));
+    const summary = document.createElement('div');
+    summary.className = 'trace-section';
+    summary.innerHTML = `<div class="trace-section-title">Run Summary</div>`;
+    const rows = [
+      ['Ticket',       data.ticket_id,                    'white'],
+      ['Status',       et.workflow_status || '-',         et.workflow_status === 'COMPLETED' ? 'ok' : et.workflow_status === 'ESCALATED' ? 'error' : 'warn'],
+      ['Mode',         mode.toUpperCase(),                'dim'],
+      ['Classification', et.classification || '-',       ''],
+      ['Resolution',   et.resolution_type || '-',        'dim'],
+      ['Saved',        data.saved_at ? data.saved_at.slice(0,19).replace('T',' ') : '-', 'dim'],
+    ];
+    rows.forEach(([k, v, cls]) => {
+      const d = document.createElement('div');
+      d.className = `trace-line ${cls}`;
+      d.textContent = `${k.padEnd(14)}${v}`;
+      summary.appendChild(d);
+    });
+    el.appendChild(summary);
 
-        traceBoxEl.innerHTML = '';
-        appendTraceCard('Run Summary', [
-          data.ticket_id ? `Ticket: ${data.ticket_id}` : null,
-          data.saved_at ? `Saved at: ${data.saved_at}` : null,
-          executionTrace.workflow_status ? `Status: ${executionTrace.workflow_status}` : null,
-          executionTrace.resolution_type ? `Resolution: ${executionTrace.resolution_type}` : null,
-          executionTrace.citations_used?.length ? `Citations: ${executionTrace.citations_used.join(', ')}` : null,
-        ].filter(Boolean).join('<br />'));
+    const decisions = et.decision_trace || [];
+    if (decisions.length) {
+      const sec = document.createElement('div');
+      sec.className = 'trace-section';
+      sec.innerHTML = `<div class="trace-section-title">Reasoning (${decisions.length})</div>`;
+      decisions.forEach(step => {
+        const d = document.createElement('div');
+        d.className = 'trace-line';
+        d.textContent = '· ' + step;
+        sec.appendChild(d);
+      });
+      el.appendChild(sec);
+    }
 
-        appendTraceCard('Reasoning', formatList(decisionTrace.map(step => `- ${step}`), 'No reasoning steps captured.'));
-        appendTraceCard('Tool Logs', formatList(toolCalls.map(call => {
-          const toolName = call.tool_name || 'tool';
-          const status = call.status || 'UNKNOWN';
-          const summary = call.output_summary || '';
-          return `- ${toolName} [${status}]${summary ? `<br />${summary}` : ''}`;
-        }), 'No tool calls captured.'));
-      }
+    const tools = et.tool_calls || [];
+    if (tools.length) {
+      const sec = document.createElement('div');
+      sec.className = 'trace-section';
+      sec.innerHTML = `<div class="trace-section-title">Tool Calls (${tools.length})</div>`;
+      tools.forEach(tc => {
+        const div = document.createElement('div');
+        div.className = 'trace-tool';
+        const statusCls = tc.status === 'SUCCESS' ? 'tool-status-ok'
+                        : tc.status?.includes('NOT_FOUND') ? 'tool-status-warn'
+                        : 'tool-status-err';
+        div.innerHTML = `
+          <div><span class="tool-name">${tc.tool_name || '-'}</span>  <span class="${statusCls}">[${tc.status || '?'}]</span></div>
+          ${tc.output_summary ? `<div class="tool-summary">${tc.output_summary}</div>` : ''}
+        `;
+        sec.appendChild(div);
+      });
+      el.appendChild(sec);
+    }
 
-      async function loadSavedRun(ticketId, mode) {
-        const response = await fetch(`/runs/${ticketId}?mode=${mode}`);
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
+    if (et.hitl?.triggered) {
+      const sec = document.createElement('div');
+      sec.className = 'trace-section';
+      sec.innerHTML = `<div class="trace-section-title">HITL</div>`;
+      const lines = [
+        ['Action',   et.hitl.action_type || '-'],
+        ['Decision', et.hitl.human_decision || 'Pending'],
+        ['Reason',   et.hitl.justification || '-'],
+      ];
+      lines.forEach(([k, v]) => {
+        const d = document.createElement('div');
+        d.className = `trace-line ${k === 'Decision' && et.hitl.human_decision === 'APPROVED' ? 'ok' : k === 'Decision' && et.hitl.human_decision === 'REJECTED' ? 'error' : ''}`;
+        d.textContent = `${k.padEnd(10)}${v}`;
+        sec.appendChild(d);
+      });
+      el.appendChild(sec);
+    }
 
-        renderSavedRun(await response.json());
-        setStatus('Loaded from trace', 'Reply and trace populated from /runs');
-      }
+    document.getElementById('traceCount').textContent = `${tools.length} calls`;
+  }
 
-      async function runResolve(ticket) {
-        const mode = modeSelect.value;
-        clearRunView();
-        setStatus('Processing...', 'Running workflow');
+  async function resolveSelected() {
+    if (!selected) return;
+    clearReplyView();
+    setStatus('busy', 'Processing…');
+    document.getElementById('actionStatus').textContent = 'Running…';
+    document.getElementById('btnResolve').disabled = true;
 
-        const response = await fetch(`/resolve?mode=${mode}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(ticket),
-        });
+    try {
+      const resp = await fetch(`/resolve?mode=${mode}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(selected),
+      });
 
-        if (!response.ok || !response.body) {
-          throw new Error(await response.text());
-        }
+      if (!resp.ok || !resp.body) throw new Error(await resp.text());
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
+      const reader = resp.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const events = buf.split('\n\n');
+        buf = events.pop() || '';
 
-          buffer += decoder.decode(value, { stream: true });
-          const events = buffer.split('\n\n');
-          buffer = events.pop() || '';
+        for (const ev of events) {
+          const line = ev.replace(/^data:\s*/, '');
+          if (!line) continue;
+          let payload;
+          try { payload = JSON.parse(line); } catch { continue; }
 
-          for (const event of events) {
-            const line = event.replace(/^data:\s*/, '');
-            if (!line) continue;
-
-            let payload;
-            try {
-              payload = JSON.parse(line);
-            } catch {
-              continue;
-            }
-
-            if (payload.type === 'hitl_required') {
-              activeThreadId = payload.thread_id;
-              hitlEl.style.display = 'flex';
-              setStatus('Waiting for approval', 'Human review required');
-              appendTraceCard('Human Review', `Thread ${payload.thread_id} is waiting for approval.`);
-              continue;
-            }
-
-            if (payload.type === 'hitl_decision_received') {
-              setStatus('Approval received', payload.decision);
-              continue;
-            }
-
-            if (payload.type === 'hitl_timeout') {
-              setStatus('Timed out', payload.message);
-              appendTraceCard('Human Review', payload.message);
-              continue;
-            }
-
-            if (payload.type === 'error') {
-              setStatus('Error', payload.error);
-              appendTraceCard('Error', payload.error);
-              continue;
-            }
-
-            if (payload._final) {
-              await loadSavedRun(ticket.ticket_id, mode);
-            }
+          if (payload.type === 'hitl_required') {
+            activeThreadId = payload.thread_id;
+            document.getElementById('hitlBar').classList.add('visible');
+            setStatus('hitl', 'Awaiting approval');
+            document.getElementById('actionStatus').textContent = 'Human review required';
+          } else if (payload.type === 'hitl_decision_received') {
+            document.getElementById('hitlBar').classList.remove('visible');
+            setStatus('busy', 'Finalising…');
+          } else if (payload.type === 'error') {
+            setStatus('error', 'Error');
+            document.getElementById('actionStatus').textContent = payload.error;
+          } else if (payload._final) {
+            await loadSavedRun(selected.ticket_id);
           }
         }
       }
+    } catch (e) {
+      setStatus('error', 'Error');
+      document.getElementById('actionStatus').textContent = String(e);
+    } finally {
+      document.getElementById('btnResolve').disabled = false;
+    }
+  }
 
-      document.getElementById('reloadTickets').onclick = loadTickets;
-      document.getElementById('runResolve').onclick = () => {
-        if (!selectedTicket) {
-          alert('Select a ticket');
-          return;
-        }
+  async function loadSavedRun(ticketId) {
+    try {
+      const r = await fetch(`/runs/${ticketId}?mode=${mode}`);
+      if (!r.ok) throw new Error(await r.text());
+      const data = await r.json();
+      setCachedRun(ticketId, data);
+      renderReply(data);
+      renderTrace(data);
+      renderList();
+      const ws = data.execution_trace?.workflow_status || 'done';
+      setStatus(ws === 'COMPLETED' ? 'ok' : ws === 'ESCALATED' ? 'error' : 'warn', ws);
+      document.getElementById('actionStatus').textContent = ws;
+      document.getElementById('hitlBar').classList.remove('visible');
+    } catch (e) {
+      setStatus('error', 'Load failed');
+      document.getElementById('actionStatus').textContent = String(e);
+    }
+  }
 
-        runResolve(selectedTicket).catch(error => {
-          setStatus('Error', String(error));
-        });
-      };
+  function clearReplyView() {
+    document.getElementById('replyText').innerHTML = '<span class="reply-placeholder">Working…</span>';
+    document.getElementById('citationArea').style.display = 'none';
+    document.getElementById('traceScroll').innerHTML = '<div class="trace-empty">Running…</div>';
+    document.getElementById('hitlBar').classList.remove('visible');
+    activeThreadId = null;
+  }
 
-      document.getElementById('simulateAll').onclick = async () => {
-        for (const ticket of tickets) {
-          try {
-            await runResolve(ticket);
-          } catch (error) {
-            setStatus('Error', String(error));
-          }
-        }
-      };
+  async function sendDecision(decision) {
+    if (!activeThreadId) return;
+    document.getElementById('hitlBar').classList.remove('visible');
+    setStatus('busy', decision === 'approved' ? 'Approved…' : 'Rejected…');
+    await fetch('/hitl-decision', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ thread_id: activeThreadId, decision }),
+    });
+  }
 
-      document.getElementById('approve').onclick = () => {
-        if (!activeThreadId) return;
-        fetch('/hitl-decision', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ thread_id: activeThreadId, decision: 'approved' }),
-        });
-      };
+  async function simulateAll() {
+    document.getElementById('btnSimAll').disabled = true;
+    for (const t of tickets) {
+      selectTicket(t);
+      await resolveSelected();
+      await new Promise(r => setTimeout(r, 800));
+    }
+    document.getElementById('btnSimAll').disabled = false;
+  }
 
-      document.getElementById('reject').onclick = () => {
-        if (!activeThreadId) return;
-        fetch('/hitl-decision', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ thread_id: activeThreadId, decision: 'rejected' }),
-        });
-      };
-
-      loadTickets();
-    </script>
-  </body>
+  loadTickets();
+</script>
+</body>
 </html>
