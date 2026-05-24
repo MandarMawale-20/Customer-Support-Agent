@@ -97,6 +97,90 @@
       "customer_email": "concerned.customer@example.com",
       "subject": "URGENT: I think my account was hacked",
       "body": "Someone changed my email and shipping address on my account. I didn't do it. There may be an order placed that isn't mine. Please help, I'm panicking."
+    },
+    {
+      "ticket_id": "TKT-0015",
+      "received_at": "2025-10-15T19:00:00Z",
+      "customer_email": "promo.user@example.com",
+      "subject": "Promo code not working at checkout",
+      "body": "Hi, I tried applying the code WELCOME20 at checkout but it says 'code not valid'. I'm a new customer. My cart is €35 total. Can you help?"
+    },
+    {
+      "ticket_id": "TKT-0016",
+      "received_at": "2025-10-15T19:15:00Z",
+      "customer_email": "gift.buyer@example.com",
+      "subject": "Forgot to apply gift card at checkout",
+      "body": "I placed order ORD-10031 about 20 minutes ago and forgot to enter my gift card code (GC-XMAS2024). Can you apply it retroactively or refund me the difference?"
+    },
+    {
+      "ticket_id": "TKT-0017",
+      "received_at": "2025-10-15T19:30:00Z",
+      "customer_email": "sub.user@example.com",
+      "subject": "Cancel my subscription before next renewal",
+      "body": "I have a monthly coffee subscription and I want to cancel it before it renews next week. I don't want to be charged again. How do I do this?"
+    },
+    {
+      "ticket_id": "TKT-0018",
+      "received_at": "2025-10-15T19:45:00Z",
+      "customer_email": "multi.item@example.com",
+      "subject": "Want to cancel one item from my order",
+      "body": "I ordered ORD-10032 which has 3 items. I want to cancel just the blue denim jacket — keep the other two. Is that possible? The order was placed an hour ago."
+    },
+    {
+      "ticket_id": "TKT-0019",
+      "received_at": "2025-10-15T20:00:00Z",
+      "customer_email": "customs.shock@example.com",
+      "subject": "Refusing to pay customs fees — want refund",
+      "body": "I ordered from you and now DHL is asking me to pay €45 in customs. Nobody told me about this. I'm refusing to pay. I want a full refund including my original shipping fee."
+    },
+    {
+      "ticket_id": "TKT-0020",
+      "received_at": "2025-10-15T20:15:00Z",
+      "customer_email": "wrong.size@example.com",
+      "subject": "Ordered wrong size — not yet delivered",
+      "body": "I just realised I ordered a size S instead of M for the linen shirt (ORD-10033). The order hasn't shipped yet. Can I change the size without cancelling?"
+    },
+    {
+      "ticket_id": "TKT-0021",
+      "received_at": "2025-10-15T20:30:00Z",
+      "customer_email": "no.tracking@example.com",
+      "subject": "Never received tracking number",
+      "body": "I placed an order 4 days ago (ORD-10034) and I still haven't received a shipping confirmation or tracking number. Has my order even been picked up?"
+    },
+    {
+      "ticket_id": "TKT-0022",
+      "received_at": "2025-10-15T20:45:00Z",
+      "customer_email": "warranty.electronics@example.com",
+      "subject": "Laptop stand cracked after 18 months — warranty?",
+      "body": "The plastic hinge on my laptop stand (ORD-10035) cracked by itself — I didn't drop it or anything. It's been about 18 months since I got it. Is this covered under warranty?"
+    },
+    {
+      "ticket_id": "TKT-0023",
+      "received_at": "2025-10-15T21:00:00Z",
+      "customer_email": "closed.card@example.com",
+      "subject": "Refund to cancelled credit card",
+      "body": "I returned an item (ORD-10036) last week and got the refund confirmation email. But the card I paid with was cancelled last month. Where will the money go?"
+    },
+    {
+      "ticket_id": "TKT-0024",
+      "received_at": "2025-10-15T21:15:00Z",
+      "customer_email": "2fa.locked@example.com",
+      "subject": "Locked out — lost authenticator app",
+      "body": "I set up 2FA on my account but I got a new phone and didn't transfer the authenticator. I can't log in at all now. I have my order confirmation emails as proof it's my account. Help!"
+    },
+    {
+      "ticket_id": "TKT-0025",
+      "received_at": "2025-10-15T21:30:00Z",
+      "customer_email": "final.sale@example.com",
+      "subject": "Return final sale item — it arrived damaged",
+      "body": "I bought an item marked Final Sale (ORD-10037) and it arrived with a crack in it. I know it's Final Sale but it's damaged — surely I can still return it?"
+    },
+    {
+      "ticket_id": "TKT-0026",
+      "received_at": "2025-10-15T21:45:00Z",
+      "customer_email": "duplicate.charge@example.com",
+      "subject": "Charged twice for the same order",
+      "body": "My bank statement shows two identical charges of €89 on October 10th. I only placed one order ORD-10038. This looks like a duplicate. Please fix this urgently."
     }
   ]
 }

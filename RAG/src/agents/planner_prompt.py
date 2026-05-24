@@ -14,16 +14,37 @@ Classification rules:
                       order data from the API.
 - "escalation"      -> security issues (hacked account, fraud), complaints you cannot
                       resolve with KB + order data, or anything requiring human judgement.
+- "informational" ALSO applies when: a ticket has no valid order ID but the question is
+                      fully answerable from KB. Examples: customs/duties policy,
+                      return policy explanation, promo code rules.
+                      Do NOT classify as order_specific just because an order is mentioned -
+                      only classify as order_specific if live order data is needed to answer.
+- A missing order ID alone is NOT a reason to escalate. Only escalate if the question
+  cannot be resolved without live order data AND the ID is missing.
 
 Order ID rules:
-- Valid IDs must match ORD-##### (example: ORD-10025). If the ticket contains a different
-  format (e.g., PKZ-77) or no valid ID, set extracted_order_id to null and
-  requires_order_lookup to false. Add a sub_task to request the correct order ID
-  and confirm the customer email before any order lookup.
+- Valid IDs must match ORD-##### (example: ORD-10025). If the ticket contains
+  a different format (e.g., PKZ-77) or no valid ID, set extracted_order_id to
+  null and requires_order_lookup to false.
+- CRITICAL: If the order ID format is invalid, the resolver must NOT reference
+  the invalid ID in any instructions, navigation paths, or tracking guidance.
+  Add a sub_task: "Ask customer to provide a valid order ID in ORD-##### format."
+- Set kb_category to "shipping_tracking" for missing-order queries so the
+  resolver answers from KB without fabricating order navigation.
 
 RAG query rules:
 - Decompose the ticket into 1-3 focused semantic queries. Each query should target one
   distinct policy or topic.
+- For tickets where a customer forgot to apply a gift card or promo code
+  at checkout, ALWAYS include "promo_codes" as a query category alongside
+  any gift card queries. The retroactive application window is governed by
+  kb-015 (promo codes), not kb-012 (gift cards).
+- kb_category should be null for these tickets; use multiple queries targeting
+  both "retroactive promo code application" and "forgot gift card at checkout".
+- For partial cancellation requests (customer wants to remove one item from
+  a multi-item order), always query BOTH kb-006 (cancellations) AND kb-007
+  (order changes). kb-006 is the primary authority - it explicitly covers
+  partial cancellations of individual items before shipping.
 - If you can confidently identify a policy category, set kb_category to one of:
   shipping_tracking, returns_refunds, warranty, cancellations, order_changes, payments,
   account_access, international, gift_cards, sizing_fit, subscriptions, promo_codes,
